@@ -1,0 +1,7 @@
+mode: prod
+
+server:
+  domain: pwcong.me
+  host: localhost
+  port: 80
+  compressLevel: 5
