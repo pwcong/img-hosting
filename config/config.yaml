@@ -1,9 +1,10 @@
 server:
-  domain: 'pwcong.me'
+  domain: 'localhost'
   host: 'localhost'
   port: 80
-  img:
-    filenameLimit: 12
+  image:
+    limit: 12
+    supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon']
   middlewares:
     cors:
       active: true
@@ -23,4 +24,3 @@ database:
     password: '123456'
     address: '192.168.56.101:3306'
     dbname: 'img_hosting'
-

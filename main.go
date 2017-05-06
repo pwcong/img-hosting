@@ -37,6 +37,7 @@ func initMiddlewares(e *echo.Echo) {
 				if err != nil {
 					log.Fatal(err.Error())
 				}
+
 			}
 
 			logPath := filepath.Join(logDir, "server.log")

@@ -14,14 +14,15 @@ type config struct {
 		Domain string
 		Host   string
 		Port   int
-		Img    struct {
-			FilenameLimit int
+		Image  struct {
+			Limit       int
+			SupportExts []string `yaml:"supportExts"`
 		}
 		Middlewares struct {
 			Cors struct {
 				Active       bool
-				AllowOrigins []string
-				AllowMethods []string
+				AllowOrigins []string `yaml:"allowOrigins"`
+				AllowMethods []string `yaml:"allowMethods"`
 			}
 			Gzip struct {
 				Active bool
@@ -47,11 +48,12 @@ type config struct {
 // DEFAULT_CONFIG is default configuration for img-hosting
 const DEFAULT_CONFIG = `
 server:
-  domain: 'pwcong.me'
+  domain: 'localhost'
   host: 'localhost'
   port: 80
-  img:
-    filenameLimit: 12
+  image:
+    limit: 12
+    supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon']
   middlewares:
     cors:
       active: true
@@ -67,9 +69,9 @@ server:
 
 database:
   mysql:
-    user: 'pwcong'
-    password: '123456'
-    address: '192.168.56.101:3306'
+    user: 'root'
+    password: ''
+    address: 'localhost:3306'
     dbname: 'img_hosting'
 `
 
