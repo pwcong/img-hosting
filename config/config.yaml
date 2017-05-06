@@ -1,16 +1,26 @@
 server:
-  domain: pwcong.me
-  host: localhost
+  domain: 'pwcong.me'
+  host: 'localhost'
   port: 80
-
+  img:
+    filenameLimit: 12
   middlewares:
     cors:
       active: true
       allowOrigins: ['*']
+      allowMethods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE']
     gzip:
       active: true
       level: 5
     log:
       active: true
       format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'
-      output: stdout
+      output: 'stdout'
+
+database:
+  mysql:
+    user: 'pwcong'
+    password: '123456'
+    address: '192.168.56.101:3306'
+    dbname: 'img_hosting'
+

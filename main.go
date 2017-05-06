@@ -7,9 +7,12 @@ import (
 
 	"path/filepath"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/pwcong/img-hosting/db"
 	Init "github.com/pwcong/img-hosting/init"
+	"github.com/pwcong/img-hosting/model"
 	"github.com/pwcong/img-hosting/router"
 )
 
@@ -59,6 +62,7 @@ func initMiddlewares(e *echo.Echo) {
 
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: Init.Config.Server.Middlewares.Cors.AllowOrigins,
+			AllowMethods: Init.Config.Server.Middlewares.Cors.AllowMethods,
 		}))
 	}
 
@@ -68,7 +72,22 @@ func initRoutes(e *echo.Echo) {
 	router.Init(e)
 }
 
+func initDB(db *gorm.DB) {
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Img{})
+}
+
 func main() {
+
+	db.MySQL.Open(
+		Init.Config.Database.MySQL.User,
+		Init.Config.Database.MySQL.Password,
+		Init.Config.Database.MySQL.Address,
+		Init.Config.Database.MySQL.DBName)
+
+	defer db.MySQL.Close()
+
+	initDB(db.MySQL.DB)
 
 	e := echo.New()
 

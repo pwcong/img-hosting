@@ -11,13 +11,17 @@ import (
 
 type config struct {
 	Server struct {
-		Domain      string
-		Host        string
-		Port        int
+		Domain string
+		Host   string
+		Port   int
+		Img    struct {
+			FilenameLimit int
+		}
 		Middlewares struct {
 			Cors struct {
 				Active       bool
 				AllowOrigins []string
+				AllowMethods []string
 			}
 			Gzip struct {
 				Active bool
@@ -30,25 +34,43 @@ type config struct {
 			}
 		}
 	}
+	Database struct {
+		MySQL struct {
+			User     string
+			Password string
+			Address  string
+			DBName   string
+		}
+	}
 }
 
+// DEFAULT_CONFIG is default configuration for img-hosting
 const DEFAULT_CONFIG = `
 server:
-  domain: pwcong.me
-  host: localhost
+  domain: 'pwcong.me'
+  host: 'localhost'
   port: 80
-
+  img:
+    filenameLimit: 12
   middlewares:
     cors:
       active: true
       allowOrigins: ['*']
+      allowMethods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE']
     gzip:
       active: true
       level: 5
     log:
       active: true
       format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'
-      output: stdout
+      output: 'stdout'
+
+database:
+  mysql:
+    user: 'pwcong'
+    password: '123456'
+    address: '192.168.56.101:3306'
+    dbname: 'img_hosting'
 `
 
 var Config config
