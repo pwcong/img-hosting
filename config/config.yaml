@@ -1,7 +1,16 @@
-mode: prod
-
 server:
   domain: pwcong.me
   host: localhost
   port: 80
-  compressLevel: 5
+
+  middlewares:
+    cors:
+      active: true
+      allowOrigins: ['*']
+    gzip:
+      active: true
+      level: 5
+    log:
+      active: true
+      format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'
+      output: stdout

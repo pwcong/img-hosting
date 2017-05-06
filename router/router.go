@@ -2,11 +2,13 @@ package router
 
 import (
 	"github.com/labstack/echo"
+	IndexController "github.com/pwcong/img-hosting/controller/index"
 )
 
 func Init(e *echo.Echo) {
 
 	e.Static("/", "view")
-	// e.GET("/", controller.Index.Default)
+
+	e.GET("/:year/:month/:day/:img", IndexController.Default)
 
 }

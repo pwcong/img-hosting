@@ -10,22 +10,45 @@ import (
 )
 
 type config struct {
-	Mode   string
 	Server struct {
-		Domain        string
-		Host          string
-		Port          int
-		CompressLevel int
+		Domain      string
+		Host        string
+		Port        int
+		Middlewares struct {
+			Cors struct {
+				Active       bool
+				AllowOrigins []string
+			}
+			Gzip struct {
+				Active bool
+				Level  int
+			}
+			Log struct {
+				Active bool
+				Format string
+				Output string
+			}
+		}
 	}
 }
 
 const DEFAULT_CONFIG = `
-mode: prod
 server:
   domain: pwcong.me
   host: localhost
   port: 80
-  compressLevel: 5
+
+  middlewares:
+    cors:
+      active: true
+      allowOrigins: ['*']
+    gzip:
+      active: true
+      level: 5
+    log:
+      active: true
+      format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'
+      output: stdout
 `
 
 var Config config

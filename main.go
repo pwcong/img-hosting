@@ -16,37 +16,52 @@ import (
 func initMiddlewares(e *echo.Echo) {
 
 	// initialize gzip middleware configuration
-	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: Init.Config.Server.CompressLevel,
-	}))
+	if Init.Config.Server.Middlewares.Gzip.Active {
+
+		e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+			Level: Init.Config.Server.Middlewares.Gzip.Level,
+		}))
+	}
 
 	// initialize log middleware configuration
-	if Init.Config.Mode == "prod" {
+	if Init.Config.Server.Middlewares.Log.Active {
 
-		logDir := filepath.Join(filepath.Dir(os.Args[0]), "log")
-		if _, err := os.Stat(logDir); err != nil {
-			err := os.MkdirAll(logDir, 0666)
+		if Init.Config.Server.Middlewares.Log.Output == "file" {
+
+			logDir := filepath.Join(filepath.Dir(os.Args[0]), "log")
+			if _, err := os.Stat(logDir); err != nil {
+				err := os.MkdirAll(logDir, 0666)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+			}
+
+			logPath := filepath.Join(logDir, "server.log")
+			logOutput, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND, 0666)
 			if err != nil {
 				log.Fatal(err.Error())
 			}
+
+			e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+				Output: logOutput,
+				Format: Init.Config.Server.Middlewares.Log.Format + "\n",
+			}))
+
+		} else if Init.Config.Server.Middlewares.Log.Output == "stdout" {
+			e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+				Format: Init.Config.Server.Middlewares.Log.Format + "\n",
+			}))
 		}
-
-		logPath := filepath.Join(logDir, "server.log")
-		logOutput, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Output: logOutput,
-		}))
-
-	} else {
-		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{}))
 	}
 
 	// initialize cors middleware configuration
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{}))
+	if Init.Config.Server.Middlewares.Cors.Active {
+
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: Init.Config.Server.Middlewares.Cors.AllowOrigins,
+		}))
+	}
+
 }
 
 func initRoutes(e *echo.Echo) {
