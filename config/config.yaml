@@ -2,6 +2,8 @@ server:
   domain: 'localhost'
   host: 'localhost'
   port: 80
+  jwt:
+    signingKey: 'img-hosting'
   image:
     limit: 12
     supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon']

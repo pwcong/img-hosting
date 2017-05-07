@@ -14,7 +14,10 @@ type config struct {
 		Domain string
 		Host   string
 		Port   int
-		Image  struct {
+		Jwt    struct {
+			SigningKey string `yaml:"signingKey"`
+		}
+		Image struct {
 			Limit       int
 			SupportExts []string `yaml:"supportExts"`
 		}
@@ -51,6 +54,8 @@ server:
   domain: 'localhost'
   host: 'localhost'
   port: 80
+  jwt:
+    signingKey: 'img-hosting'
   image:
     limit: 12
     supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon']

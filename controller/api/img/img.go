@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"strconv"
-
 	"github.com/labstack/echo"
 	Init "github.com/pwcong/img-hosting/init"
 	ImgService "github.com/pwcong/img-hosting/service/img"
@@ -19,11 +17,16 @@ const (
 	URL_API_IMG_PUBLIC        = URL_API_IMG_PUBLIC_PREFIX + "/:year/:month/:day/:storename"
 )
 
+type ImgJSONResponse struct {
+	Code     int    `json:"code"`
+	Filename string `json:"filename"`
+	Path     string `json:"path"`
+	URL      string `json:"url"`
+	JSONResponse
+}
+
 type JSONResponse struct {
-	Code     int
-	Filename string
-	Path     string
-	URL      string
+	Message string `json:"message"`
 }
 
 var PublicIMGURLPrefix string
@@ -37,7 +40,7 @@ func Upload(c echo.Context) error {
 	img, err := c.FormFile("img")
 
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
 	}
 
 	contentType := img.Header.Get("Content-Type")
@@ -48,24 +51,24 @@ func Upload(c echo.Context) error {
 
 			src, err := img.Open()
 			if err != nil {
-				return err
+				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
 			}
 
 			defer src.Close()
 
 			data, err := ioutil.ReadAll(src)
 			if err != nil {
-				return err
+				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
 			}
 			filename := stringutils.PickFilenameFromContentDisposition(img.Header.Get("Content-Disposition"))
 
-			err, path := ImgService.SaveImage(uid, filename, data)
+			err, path := ImgService.SaveImage(uid, filename, contentType, data)
 
 			if err != nil {
-				return c.String(http.StatusInternalServerError, "")
+				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
 			}
 
-			return c.JSON(http.StatusOK, JSONResponse{
+			return c.JSON(http.StatusOK, ImgJSONResponse{
 				Code:     http.StatusOK,
 				Filename: filename,
 				Path:     path,
@@ -74,30 +77,22 @@ func Upload(c echo.Context) error {
 		}
 	}
 
-	return c.String(http.StatusUnsupportedMediaType, "")
+	return c.JSON(http.StatusUnsupportedMediaType, JSONResponse{""})
 }
 
 func Get(c echo.Context) error {
 
-	err, data := ImgService.LoadImage(c.Param("year"), c.Param("month"), c.Param("day"), c.Param("storename"))
+	err, contentType, data := ImgService.LoadImage(c.Param("year"), c.Param("month"), c.Param("day"), c.Param("storename"))
 
 	if err != nil {
-		c.String(http.StatusNotFound, "")
+		c.JSON(http.StatusNotFound, JSONResponse{err.Error()})
 	}
 
-	return c.Blob(http.StatusOK, http.DetectContentType(data), data)
+	return c.Blob(http.StatusOK, contentType, data)
 }
 
 func init() {
 
-	if Init.Config.Server.Port == 80 {
-		PublicIMGURLPrefix = "http://" + Init.Config.Server.Domain + URL_API_IMG_PUBLIC_PREFIX
-	} else {
-		PublicIMGURLPrefix = "http://" +
-			Init.Config.Server.Domain +
-			":" +
-			strconv.Itoa(Init.Config.Server.Port) +
-			URL_API_IMG_PUBLIC_PREFIX
-	}
+	PublicIMGURLPrefix = "http://" + Init.Config.Server.Domain + URL_API_IMG_PUBLIC_PREFIX
 
 }

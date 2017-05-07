@@ -11,7 +11,7 @@ import (
 	"github.com/pwcong/img-hosting/utils/uuid"
 )
 
-func SaveImage(uid string, filename string, data []byte) (error, string) {
+func SaveImage(uid string, filename string, contentType string, data []byte) (error, string) {
 
 	ext := fileutils.GetExtension(filename)
 	year := timeutils.GetYear()
@@ -29,6 +29,7 @@ func SaveImage(uid string, filename string, data []byte) (error, string) {
 
 	img := &model.Img{
 		Filename:  filename,
+		Type:      contentType,
 		Data:      data,
 		Year:      year,
 		Month:     month,
@@ -44,24 +45,24 @@ func SaveImage(uid string, filename string, data []byte) (error, string) {
 	notFound := db.MySQL.DB.First(&model.Img{}, "path = ?", img.Path).RecordNotFound()
 
 	if notFound {
-		return errors.New(""), ""
+		return errors.New("unknown error"), ""
 	}
 
 	return nil, img.Path
 
 }
 
-func LoadImage(year string, month string, day string, storename string) (error, []byte) {
+func LoadImage(year string, month string, day string, storename string) (error, string, []byte) {
 
 	var img model.Img
 
 	notFound := db.MySQL.DB.First(&img, "year = ? AND month = ? AND day = ? AND storename = ?", year, month, day, storename).RecordNotFound()
 
 	if notFound {
-		return errors.New(""), []byte{}
+		return errors.New("not found"), "", []byte{}
 
 	}
 
-	return nil, img.Data
+	return nil, img.Type, img.Data
 
 }
