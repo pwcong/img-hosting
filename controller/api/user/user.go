@@ -16,12 +16,12 @@ const (
 )
 
 type UserJSONResponse struct {
-	Code  int    `json:"code"`
 	Token string `json:"token"`
 	JSONResponse
 }
 
 type JSONResponse struct {
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
@@ -31,24 +31,36 @@ func Register(c echo.Context) error {
 	pwd := c.FormValue("pwd")
 
 	if uid == "" || pwd == "" {
-		return c.JSON(http.StatusBadRequest, JSONResponse{"uid and pwd can not be empty"})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"uid and pwd can not be empty",
+		})
 	}
 
 	err, uid := UserService.Add(uid, pwd)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, JSONResponse{err.Error()})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			err.Error(),
+		})
 
 	}
 
 	err, tokenString := AuthService.GenerateTokenStringWithUserClaims(uid)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			http.StatusInternalServerError,
+			err.Error(),
+		})
 	}
 
 	return c.JSON(http.StatusOK, UserJSONResponse{
-		Code:  http.StatusOK,
 		Token: tokenString,
+		JSONResponse: JSONResponse{
+			Code:    http.StatusOK,
+			Message: "",
+		},
 	})
 }
 
@@ -58,23 +70,35 @@ func Login(c echo.Context) error {
 	pwd := c.FormValue("pwd")
 
 	if uid == "" || pwd == "" {
-		return c.JSON(http.StatusBadRequest, JSONResponse{"uid and pwd can not be empty"})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"uid and pwd can not be empty",
+		})
 	}
 
 	err, user := UserService.Find(uid, pwd)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, JSONResponse{err.Error()})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			err.Error(),
+		})
 	}
 
 	err, tokenString := AuthService.GenerateTokenStringWithUserClaims(user.Uid)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			http.StatusInternalServerError,
+			err.Error(),
+		})
 	}
 
 	return c.JSON(http.StatusOK, UserJSONResponse{
-		Code:  http.StatusOK,
 		Token: tokenString,
+		JSONResponse: JSONResponse{
+			Code:    http.StatusOK,
+			Message: "",
+		},
 	})
 }
 
@@ -85,18 +109,27 @@ func UpdatePassword(c echo.Context) error {
 	newPwd := c.FormValue("newPwd")
 
 	if uid == "" || srcPwd == "" || newPwd == "" {
-		return c.JSON(http.StatusBadRequest, JSONResponse{"uid and srcPwd and newPwd can not be empty"})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"uid and srcPwd and newPwd can not be empty",
+		})
 	}
 
 	err, _ := UserService.Find(uid, srcPwd)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, JSONResponse{err.Error()})
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			err.Error(),
+		})
 	}
 
 	err = UserService.UpdatePassword(uid, srcPwd, newPwd)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			http.StatusInternalServerError,
+			err.Error(),
+		})
 	}
 
 	return c.NoContent(http.StatusOK)

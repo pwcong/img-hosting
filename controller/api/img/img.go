@@ -1,7 +1,6 @@
 package img
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -18,7 +17,6 @@ const (
 )
 
 type ImgJSONResponse struct {
-	Code     int    `json:"code"`
 	Filename string `json:"filename"`
 	Path     string `json:"path"`
 	URL      string `json:"url"`
@@ -26,21 +24,23 @@ type ImgJSONResponse struct {
 }
 
 type JSONResponse struct {
-	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
 }
 
 var PublicIMGURLPrefix string
 
 func Upload(c echo.Context) error {
 
-	fmt.Println(c.Path())
-
 	uid := c.FormValue("uid")
 
 	img, err := c.FormFile("img")
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			http.StatusInternalServerError,
+			err.Error(),
+		})
 	}
 
 	contentType := img.Header.Get("Content-Type")
@@ -51,33 +51,45 @@ func Upload(c echo.Context) error {
 
 			src, err := img.Open()
 			if err != nil {
-				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+				return c.JSON(http.StatusInternalServerError, JSONResponse{
+					http.StatusInternalServerError,
+					err.Error(),
+				})
 			}
 
 			defer src.Close()
 
 			data, err := ioutil.ReadAll(src)
 			if err != nil {
-				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+				return c.JSON(http.StatusInternalServerError, JSONResponse{http.StatusInternalServerError, err.Error()})
 			}
 			filename := stringutils.PickFilenameFromContentDisposition(img.Header.Get("Content-Disposition"))
 
 			err, path := ImgService.SaveImage(uid, filename, contentType, data)
 
 			if err != nil {
-				return c.JSON(http.StatusInternalServerError, JSONResponse{err.Error()})
+				return c.JSON(http.StatusInternalServerError, JSONResponse{
+					http.StatusInternalServerError,
+					err.Error(),
+				})
 			}
 
 			return c.JSON(http.StatusOK, ImgJSONResponse{
-				Code:     http.StatusOK,
 				Filename: filename,
 				Path:     path,
 				URL:      PublicIMGURLPrefix + path,
+				JSONResponse: JSONResponse{
+					Code:    http.StatusOK,
+					Message: "",
+				},
 			})
 		}
 	}
 
-	return c.JSON(http.StatusUnsupportedMediaType, JSONResponse{""})
+	return c.JSON(http.StatusUnsupportedMediaType, JSONResponse{
+		http.StatusUnsupportedMediaType,
+		"",
+	})
 }
 
 func Get(c echo.Context) error {
@@ -85,7 +97,10 @@ func Get(c echo.Context) error {
 	err, contentType, data := ImgService.LoadImage(c.Param("year"), c.Param("month"), c.Param("day"), c.Param("storename"))
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, JSONResponse{err.Error()})
+		c.JSON(http.StatusNotFound, JSONResponse{
+			http.StatusNotFound,
+			err.Error(),
+		})
 	}
 
 	return c.Blob(http.StatusOK, contentType, data)
