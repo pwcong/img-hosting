@@ -1,5 +1,5 @@
 <template>
-    <div class="markdown-body" v-html="rawHtml">
+    <div class="markdown-body content" v-html="rawHtml">
     </div>
 </template>
 <style>
@@ -12,7 +12,7 @@
     const text = `
     # 联系我
     有任何疑问或者问题，请通过以下方式联系我：
-    * 扣扣：429734712
+    * 扣扣：2209594033
     * 邮箱：pwcong@foxmail.com
     `
 

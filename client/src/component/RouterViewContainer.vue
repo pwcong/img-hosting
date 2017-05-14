@@ -18,6 +18,16 @@
 
         overflow: auto;
 
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .content{
+        width: 100%;
+        color: #2c3e50;
     }
 
 </style>

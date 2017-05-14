@@ -9,6 +9,8 @@
 
         font-size: 12px;
 
+        color: #666;
+
         background-color: #ccc;
 
         box-sizing: border-box;
