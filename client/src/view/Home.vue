@@ -21,6 +21,8 @@
                     :progress="img.progress"
                     :onRemoveButtonClick="onImageItemRemove"
                     :onUploadButtonClick="onImageItemUpload"
+                    :img-url="img.url"
+                    :onShowImageURL="onImageItemInfo"
                     />
             </div>
             <div v-if="imgListLength <= 0" class="upload-manager-tips">
@@ -29,11 +31,26 @@
         </div>
         <div class="upload-tools">
             <div class="upload-tools-msg">
+                {{ msg }}
             </div>
             <div class="upload-tools-btns">
 
-                <div class="upload-tools-btn upload-tools-btn-upload" v-if="true">上传</div>
-                <div class="upload-tools-btn upload-tools-btn-browse">浏览</div>
+                <div 
+                    @click="copyMsg"
+                    class="upload-tools-btn upload-tools-btn-copy" 
+                    v-if="msg != ''">
+                    复制
+                </div>
+                <div 
+                    @click="onUploadAllImage"
+                    class="upload-tools-btn upload-tools-btn-upload" 
+                    v-if="canUploadAll">
+                    上传
+                </div>
+                <div class="upload-tools-btn upload-tools-btn-browse">
+                    <input type="file" multiple="multipe" @change="onFilesSelect"/>
+                    浏览
+                </div>
 
             </div>
         </div>
@@ -169,6 +186,8 @@
         -moz-box-sizing: border-box;
 
         padding-left: 8px;
+        
+        overflow: auto;
 
         transition: border 0.3s;
 
@@ -217,6 +236,7 @@
     .upload-tools-btn-browse{
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
+        position: relative;
     }
 
     .upload-tools-btn-browse:hover{
@@ -226,13 +246,37 @@
         background-color: #1b2d40;
     }
 
+    .upload-tools-btn-browse input{
+        opacity: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+
     .upload-tools-btn-upload{
         background-color: #10a199;
     }
+
+
     .upload-tools-btn-upload:hover{
         background-color: lightseagreen;
     }
     .upload-tools-btn-upload:active{
+        background-color: #009088;
+    }
+
+    .upload-tools-btn-copy{
+        background-color: #10a199;
+    }
+
+
+    .upload-tools-btn-copy:hover{
+        background-color: lightseagreen;
+    }
+    .upload-tools-btn-copy:active{
         background-color: #009088;
     }
 
@@ -250,7 +294,8 @@
     export default {
         data(){
             return {
-                uploadManagerBackgroundColor: 'rgba(1, 1, 1, 0)'
+                uploadManagerBackgroundColor: 'rgba(1, 1, 1, 0)',
+                msg: ''
             }
         },
         computed: mapGetters([
@@ -260,10 +305,24 @@
         ]),
         methods: {
             onImageItemRemove(e){
-                console.log(e.target.getAttribute("flag"));
+
+                this.$store.commit(types.MUTATION_IMG_REMOVEIMG, {
+                    flag: e.target.getAttribute("flag")
+                });
+
             },
             onImageItemUpload(e){
-                console.log(e.target.getAttribute("flag"));
+
+                this.$store.dispatch(types.ACTION_IMG_TOUPLOADIMG, {
+                    flag: e.target.getAttribute("flag")
+                });
+
+            },
+            onUploadAllImage(e){
+
+                this.$store.dispatch(types.ACTION_IMG_TOUPLOADALLIMG, {
+                    
+                });
             },
             onUploadManagerDragEnter(e){
 
@@ -291,6 +350,27 @@
                     });
                 }
                 
+
+            },
+            onFilesSelect(e){
+
+                let ctx = this;
+
+                let files =  e.target.files;
+
+                for(let i = 0; i < files.length; i++){
+                    ctx.$store.commit(types.MUTATION_IMG_PUSHIMG, {
+                        file: files[i]
+                    });
+                }
+
+            },
+            onImageItemInfo(e){
+                this.$data.msg = e.target.getAttribute("img-url");
+            },
+            copyMsg(e){
+
+                window.prompt("请 Ctrl + C 拷贝至剪贴板", this.$data.msg);
 
             }
         },

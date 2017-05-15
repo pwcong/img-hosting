@@ -15,6 +15,6 @@ Simple Free Image Hosting
 
 
 ## Todos
+- [x] Upload Image & Generate Public Image URL
 - [ ] User Register/Login
-- [ ] Upload Image & Generate Public Image URL
 - [ ] Manage Uploaded Images

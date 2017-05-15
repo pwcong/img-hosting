@@ -17,7 +17,9 @@
                 >
             </span>
             <span 
-                class="fa fa-check" 
+                @click="onShowImageURL"
+                :img-url="imgUrl"
+                class="fa fa-info-circle" 
                 v-if="!uploading && uploaded"
                 >
             </span>
@@ -97,14 +99,14 @@
     .upload-manager-item-tools span.fa{
         cursor: pointer;
         transition: color 0.3s;
+        font-size: 18px;
     }
     .upload-manager-item-tools span.fa-spinner{
         animation: rotation 1s infinite linear;
         cursor: wait;
     }
-    .upload-manager-item-tools span.fa-check{
+    .upload-manager-item-tools span.fa-info-circle{
         color: lightseagreen;
-        cursor: default;
     }
     .upload-manager-item-tools span.fa-trash:hover{
         color: orangered;
@@ -164,6 +166,11 @@
                 type: Number,
                 require: true
             },
+            imgUrl: {
+                type: String,
+                require: true
+
+            },
             onUploadButtonClick: {
                 type: Function,
                 default: function(e){
@@ -174,6 +181,12 @@
                 type: Function,
                 default: function(e){
                     console.log("remove");
+                }
+            },
+            onShowImageURL: {
+                type: Function,
+                default: function(e){
+                    console.log("show");
                 }
             }
         }

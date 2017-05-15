@@ -1,3 +1,6 @@
+import axios from 'axios';
+
+import * as api from '../../api.js';
 import * as types from '../types.js';
 
 const store = {
@@ -11,7 +14,8 @@ const store = {
             //     img: '/imgs/test.jpg',
             //     uploading: false,
             //     uploaded: false,
-            //     progress: 0
+            //     progress: 0,
+            //     url: ''
             // },
         ]
     },
@@ -39,13 +43,16 @@ const store = {
                 img: window.URL.createObjectURL(payload.file),
                 uploading: false,
                 uploaded: false,
-                progress: 0
+                progress: 0,
+                url: ''
             });
+
+            state.imgCount++;
         },
         [types.MUTATION_IMG_REMOVEIMG](state, payload){
-            imgList.forEach((img, index) => {
-                if(img.key == payload.key){
-                    imgList.splice(index, 1);
+            state.imgList.forEach((img, index) => {
+                if(img.flag == payload.flag){
+                    state.imgList.splice(index, 1);
                     return;
                 }
             });
@@ -54,8 +61,57 @@ const store = {
     },
     actions: {
 
-        [types.ACTION_IMG_TOUPLOADIMG]({commit, state}, key){
+        [types.ACTION_IMG_TOUPLOADIMG]({commit, state}, payload){
+
+            state.imgList.forEach( img => {
+
+                if(img.flag == payload.flag){
+
+                    let formData = new FormData();
+                    formData.append("img", img.file);
+                    formData.append("uid", payload.uid);
+
+                    img.uploading = true;
             
+
+                    axios.request({
+                        url: api.URL_API_IMG_UPLOAD,
+                        method: 'post',
+                        data: formData,
+                        onUploadProgress: function(progressEvent){
+                            let loaded = progressEvent.loaded;
+                            let total = progressEvent.total;
+
+                            img.progress = 100 * loaded / total;
+
+                        }
+
+                    }).then( res => {
+                        img.url = res.data.url;
+                        img.uploaded = true;
+                        img.uploading = false;
+                    }).catch( err => {
+                        img.uploading = false;
+                    });
+
+                }   
+
+            });
+            
+
+        },
+        [types.ACTION_IMG_TOUPLOADALLIMG]({dispatch, commit, state}, payload){
+            
+            state.imgList.forEach( img => {
+
+                if(!img.uploaded && !img.uploading){
+                    dispatch(types.ACTION_IMG_TOUPLOADIMG, {
+                        flag: img.flag,
+                        uid: payload.uid
+                    });
+                }
+
+            });
 
         }
 
