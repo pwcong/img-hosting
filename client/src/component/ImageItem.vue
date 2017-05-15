@@ -1,13 +1,33 @@
 <template>
     <div class="upload-manager-item">
         <div class="upload-manager-item-img">
-            <img :src="file"/>
+            <img :src="img"/>
         </div>
         <div class="upload-manager-item-tools">
-            <span class="fa fa-upload" v-if="!uploading && !uploaded"></span>
-            <span class="fa fa-spinner" v-if="uploading"></span>
-            <span class="fa fa-check" v-if="!uploading && uploaded"></span>
-            <span class="fa fa-trash" v-if="!uploading"></span>
+            <span 
+                class="fa fa-upload" 
+                v-if="!uploading && !uploaded"
+                @click="onUploadButtonClick"
+                :flag="flag"
+                >
+            </span>
+            <span 
+                class="fa fa-spinner" 
+                v-if="uploading"
+                >
+            </span>
+            <span 
+                class="fa fa-check" 
+                v-if="!uploading && uploaded"
+                >
+            </span>
+            <span 
+                :flag="flag"
+                class="fa fa-trash" 
+                v-if="!uploading"
+                @click="onRemoveButtonClick"
+                >
+            </span>
         </div>
         <div class="upload-manager-item-progress" v-if="uploading">
             <div 
@@ -22,6 +42,8 @@
 <style>
 
     .upload-manager-item{
+
+        background-color: white;
 
         margin: 4px;
 
@@ -126,7 +148,7 @@
                 type: String,
                 require: true
             },
-            file: {
+            img: {
                 type: String,
                 require: true
             },
@@ -142,6 +164,18 @@
                 type: Number,
                 require: true
             },
+            onUploadButtonClick: {
+                type: Function,
+                default: function(e){
+                    console.log("upload");
+                }
+            },
+            onRemoveButtonClick: {
+                type: Function,
+                default: function(e){
+                    console.log("remove");
+                }
+            }
         }
         
     }

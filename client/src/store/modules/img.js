@@ -3,21 +3,16 @@ import * as types from '../types.js';
 const store = {
 
     state: {
+        imgCount: 0,
         imgList: [
-            {
-                flag: 'img-1',
-                file: '/imgs/test.jpg',
-                uploading: false,
-                uploaded: false,
-                progress: 0
-            },
-            {
-                flag: 'img-1',
-                file: '/imgs/test.jpg',
-                uploading: false,
-                uploaded: false,
-                progress: 0
-            }
+            // {
+            //     flag: 'img-1',
+            //     file: '',
+            //     img: '/imgs/test.jpg',
+            //     uploading: false,
+            //     uploaded: false,
+            //     progress: 0
+            // },
         ]
     },
     getters: {
@@ -26,8 +21,8 @@ const store = {
         imgListLength: state => state.imgList.length,
 
         canUploadAll: state => {
-            for(let i = 0; i < imgList.length; i++){
-                if(!imgList[i].uploading && !imgList[i].uploaded)
+            for(let i = 0; i < state.imgList.length; i++){
+                if(!state.imgList[i].uploading && !state.imgList[i].uploaded)
                     return true;
             }
 
@@ -38,7 +33,14 @@ const store = {
     mutations: {
 
         [types.MUTATION_IMG_PUSHIMG](state, payload){
-            imgList.push(payload.img);
+            state.imgList.push({
+                flag: "img-" + state.imgCount,
+                file: payload.file,
+                img: window.URL.createObjectURL(payload.file),
+                uploading: false,
+                uploaded: false,
+                progress: 0
+            });
         },
         [types.MUTATION_IMG_REMOVEIMG](state, payload){
             imgList.forEach((img, index) => {
