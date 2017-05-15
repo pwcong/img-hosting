@@ -1,5 +1,8 @@
+
 # IMG-Hosting
 Simple Free Image Hosting
+
+![Demo](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/demo.png)
 
 ## Techs
 **FrontEnd:**
