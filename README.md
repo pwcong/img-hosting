@@ -3,6 +3,7 @@
 Simple Free Image Hosting
 
 ![Demo](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/demo.png)
+![Demo](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/demo2.png)
 
 ## Techs
 **FrontEnd:**
