@@ -7,6 +7,7 @@ import Home from '../view/Home.vue';
 import About from '../view/About.vue';
 import Contact from '../view/Contact.vue';
 import API from '../view/API.vue';
+import Own from '../view/Own.vue';
 
 const routes = [
     {
@@ -24,6 +25,10 @@ const routes = [
     {
         path: '/api',
         component: API
+    },
+    {
+        path: '/own',
+        component: Own
     }
 ];
 

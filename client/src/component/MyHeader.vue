@@ -6,6 +6,7 @@
         <router-link 
             class="header-menu"
             v-for="menu in menuList"
+            v-if="menu.active"
             :key="menu.path" 
             :to="menu.path">
             {{ menu.text }}

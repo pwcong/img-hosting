@@ -46,6 +46,8 @@
 </style>
 <script>
 
+    // import { router } from 'vue-router';
+
     import * as types from '../store/types.js';
 
     import MyHeader from '../component/MyHeader.vue';
@@ -57,18 +59,22 @@
     export default {
         data(){
             return {
-                menuList: [
-                    { path: '/', text: '主页' },
-                    { path: '/about', text: '关于' },
-                    { path: '/contact', text: '联系' },
-                    { path: '/api', text: 'API' }
-                ],
                 brand: "IMG HOSTING",
                 footerText: "Copyleft © 2017  Pwcong",
                 loginOrRegisterBoxActive: false
             }
         },
         computed: {
+
+            menuList(){
+                return [
+                    { path: '/', text: '主页', active: true },
+                    { path: '/own', text: '个人图库', active: this.$store.state.user.logined },
+                    { path: '/about', text: '关于', active: true },
+                    { path: '/contact', text: '联系', active: true },
+                    { path: '/api', text: 'API', active: true },
+                ]
+            },
             uid(){
                 return this.$store.state.user.uid;
             },
@@ -90,6 +96,7 @@
             },
             handleSignOut(e){
 
+                this.$router.push("/");
                 this.$store.dispatch(types.ACTION_USER_TOLOGOUT);
 
             },
