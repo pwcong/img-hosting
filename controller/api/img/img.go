@@ -16,6 +16,7 @@ const (
 	URL_API_IMG_PUBLIC_PREFIX = "/public"
 	URL_API_IMG_PUBLIC        = URL_API_IMG_PUBLIC_PREFIX + "/:year/:month/:day/:storename"
 	URL_API_IMG_LIST          = "/img/list"
+	URL_API_IMG_DELETE        = "/img/delete"
 )
 
 type ImgListItemJSON struct {
@@ -110,21 +111,33 @@ func Upload(c echo.Context) error {
 
 func Get(c echo.Context) error {
 
-	err, contentType, data := ImgService.LoadImage(c.Param("year"), c.Param("month"), c.Param("day"), c.Param("storename"))
+	err, img := ImgService.LoadImage(c.Param("year"), c.Param("month"), c.Param("day"), c.Param("storename"))
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, JSONResponse{
 			http.StatusNotFound,
 			err.Error(),
 		})
+
 	}
 
-	return c.Blob(http.StatusOK, contentType, data)
+	return c.Blob(http.StatusOK, img.Type, img.Data)
 }
 
-func List(c echo.Context) error {
+func Delete(c echo.Context) error {
 
 	token := c.FormValue("token")
+	year := c.FormValue("year")
+	month := c.FormValue("month")
+	day := c.FormValue("day")
+	storename := c.FormValue("storename")
+
+	if token == "" || year == "" || month == "" || day == "" || storename == "" {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"token & year & month & day & storename can not be null",
+		})
+	}
 
 	err, uid := AuthService.CheckTokenStringWithUserClaims(token)
 
@@ -135,14 +148,42 @@ func List(c echo.Context) error {
 		})
 	}
 
-	if uid == "" {
+	err = ImgService.DeleteImage(uid, year, month, day, storename)
+
+	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			http.StatusBadRequest,
-			"uid can not be null",
+			err.Error(),
 		})
 	}
 
-	err, imgs := ImgService.GetImagesByUID(uid)
+	return c.JSON(http.StatusOK, JSONResponse{
+		http.StatusOK,
+		"",
+	})
+
+}
+func List(c echo.Context) error {
+
+	token := c.FormValue("token")
+
+	if token == "" {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"token can not be null",
+		})
+	}
+
+	err, uid := AuthService.CheckTokenStringWithUserClaims(token)
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, JSONResponse{
+			http.StatusUnauthorized,
+			err.Error(),
+		})
+	}
+
+	err, imgs := ImgService.GetImages(uid)
 
 	if err != nil {
 

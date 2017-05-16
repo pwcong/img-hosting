@@ -63,27 +63,44 @@ func SaveImage(uid string, filename string, contentType string, data []byte) (er
 
 }
 
-func LoadImage(year string, month string, day string, storename string) (error, string, []byte) {
+func LoadImage(year string, month string, day string, storename string) (error, model.Img) {
 
 	img := model.Img{
 		TBName: "imgs_" + year + "_" + month,
 	}
 
 	if !db.MySQL.DB.HasTable(&img) {
-		return errors.New("not found"), "", []byte{}
+		return errors.New("not found"), model.Img{}
 	}
 
 	notFound := db.MySQL.DB.First(&img, "day = ? AND storename = ?", day, storename).RecordNotFound()
 
 	if notFound {
-		return errors.New("not found"), "", []byte{}
+		return errors.New("not found"), model.Img{}
 	}
 
-	return nil, img.Type, img.Data
+	return nil, img
 
 }
 
-func GetImagesByUID(uid string) (error, []model.Img) {
+func DeleteImage(uid string, year string, month string, day string, storename string) error {
+
+	err, img := LoadImage(year, month, day, storename)
+
+	if err != nil {
+		return err
+	}
+
+	if uid != img.Uid {
+		return errors.New("")
+	}
+
+	db.MySQL.DB.Delete(&img)
+
+	return nil
+}
+
+func GetImages(uid string) (error, []model.Img) {
 
 	var res []model.Img
 
