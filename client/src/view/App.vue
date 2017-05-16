@@ -1,6 +1,13 @@
 <template>
     <div class="container">
-        <my-header :menu-list="menuList" :brand="brand"/>
+        <my-header 
+            :menu-list="menuList" 
+            :brand="brand"
+            :uid="uid"
+            :logined="logined"
+            :onSignInClickListener="handleSignIn"
+            :onSignOutClickListener="handleSignOut"
+            />
         <router-view-container/>
         <my-footer :text="footerText"/>
     </div>
@@ -20,6 +27,8 @@
 </style>
 <script>
 
+    import * as types from '../store/types.js';
+
     import MyHeader from '../component/MyHeader.vue';
     import MyFooter from '../component/MyFooter.vue';
 
@@ -35,14 +44,28 @@
                     { path: '/api', text: 'API' }
                 ],
                 brand: "IMG HOSTING",
-                footerText: "Copyleft © 2017  Pwcong"
+                footerText: "Copyleft © 2017  Pwcong",
+                
             }
         },
         computed: {
-            
+            uid(){
+                return this.$store.state.user.uid;
+            },
+            logined(){
+                return this.$store.state.user.logined;
+            }
         },
         methods: {
-            
+            handleSignIn(e){
+                
+
+            },
+            handleSignOut(e){
+
+                this.$store.dispatch(types.ACTION_USER_TOLOGOUT);
+
+            }
         },
         components: {
             MyHeader,

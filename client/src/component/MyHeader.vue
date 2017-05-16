@@ -10,7 +10,26 @@
             :to="menu.path">
             {{ menu.text }}
         </router-link>
-        <div class="header-user"></div>
+        <div class="header-user">
+
+            <div 
+                class="header-user-item header-user-item-btn" 
+                v-if="!logined"
+                @click="onSignInClickListener">
+                <span class="fa fa-lg fa-sign-in"></span>
+            </div>
+
+            <div class="header-user-item" v-if="logined">
+                {{ "Hi~ o(*￣▽￣*)ブ " +  uid }}
+            </div>
+            <div 
+                class="header-user-item header-user-item-btn" 
+                v-if="logined"
+                @click="onSignOutClickListener">
+                <span class="fa fa-lg fa-sign-out"></span>
+            </div>
+
+        </div>
     </div>
 </template>
 <style>
@@ -90,11 +109,51 @@
 
     .header-user{
         height: 100%;
-        width: 200px;
-        border: 1px red solid;
 
         position: absolute;
-        right: 0px;
+        right: 32px;
+
+        display: flex;
+        align-items: center;
+    }
+
+    .header-user-item{
+
+        font-size: 14px;
+
+        color: white;
+
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+
+        padding: 8px;
+
+        display: flex;
+        align-items: center;
+
+
+    }
+    .header-user-item-btn{
+
+        cursor: pointer;
+
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+
+        transition: color 0.3s;
+
+    }
+
+    .header-user-item-btn:hover{
+        color: lightseagreen;
+    }
+
+    .header-user-item-btn:active{
+        color: #10a199;
     }
 
 
@@ -111,6 +170,26 @@
             brand: {
                 type: String,
                 require: true
+            },
+            logined: {
+                type: Boolean,
+                require: true
+            },
+            uid: {
+                type: String,
+                require: true
+            },
+            onSignInClickListener: {
+                type: Function,
+                default: function(e){
+                    console.log("sign in");
+                }
+            },
+            onSignOutClickListener: {
+                type: Function,
+                default: function(e){
+                    console.log("sign out");
+                }
             }
         },
         data(){
