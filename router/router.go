@@ -20,6 +20,7 @@ func Init(e *echo.Echo) {
 
 	e.POST(UserController.URL_API_USER_LOGIN, UserController.Login)
 	e.POST(UserController.URL_API_USER_REGISTER, UserController.Register)
+	e.POST(UserController.URL_API_USER_CHECK, UserController.Check)
 	e.POST(UserController.URL_API_USER_UPDATE, UserController.UpdatePassword)
 
 }

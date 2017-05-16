@@ -12,8 +12,16 @@ import (
 const (
 	URL_API_USER_REGISTER = "/user/register"
 	URL_API_USER_LOGIN    = "/user/login"
-	URL_API_USER_UPDATE   = "/user/update"
+	URL_API_USER_CHECK    = "/user/check"
+
+	URL_API_USER_UPDATE = "/user/update"
 )
+
+type UserInfoJSONResponse struct {
+	Token string `json:"token"`
+	Uid   string `json:"uid"`
+	JSONResponse
+}
 
 type UserJSONResponse struct {
 	Token string `json:"token"`
@@ -100,6 +108,38 @@ func Login(c echo.Context) error {
 			Message: "",
 		},
 	})
+}
+
+func Check(c echo.Context) error {
+
+	token := c.FormValue("token")
+
+	if token == "" {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			"",
+		})
+	}
+
+	err, uid := AuthService.CheckTokenStringWithUserClaims(token)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
+			err.Error(),
+		})
+
+	}
+
+	return c.JSON(http.StatusOK, UserInfoJSONResponse{
+		Token: token,
+		Uid:   uid,
+		JSONResponse: JSONResponse{
+			http.StatusOK,
+			"",
+		},
+	})
+
 }
 
 func UpdatePassword(c echo.Context) error {
