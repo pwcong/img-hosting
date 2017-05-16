@@ -37,12 +37,11 @@ func Upload(c echo.Context) error {
 	img, err := c.FormFile("img")
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, JSONResponse{
-			http.StatusInternalServerError,
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			http.StatusBadRequest,
 			err.Error(),
 		})
 	}
-
 	contentType := img.Header.Get("Content-Type")
 
 	for _, ext := range Init.Config.Server.Image.SupportExts {

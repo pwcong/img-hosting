@@ -36,6 +36,10 @@ type config struct {
 				Format string
 				Output string
 			}
+			Limit struct {
+				Active bool
+				Size   string
+			}
 		}
 	}
 	Database struct {
@@ -71,7 +75,9 @@ server:
       active: true
       format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'
       output: 'stdout'
-
+    limit:
+      active: true
+      size: '4MB'
 database:
   mysql:
     user: 'root'

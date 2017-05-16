@@ -67,6 +67,13 @@ func initMiddlewares(e *echo.Echo) {
 		}))
 	}
 
+	// initialize bodyLimit moddleware configuration
+	if Init.Config.Server.Middlewares.Limit.Active {
+		e.Use(middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{
+			Limit: Init.Config.Server.Middlewares.Limit.Size,
+		}))
+	}
+
 }
 
 func initRoutes(e *echo.Echo) {
@@ -75,7 +82,6 @@ func initRoutes(e *echo.Echo) {
 
 func initDB(db *gorm.DB) {
 	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Img{})
 }
 
 func main() {

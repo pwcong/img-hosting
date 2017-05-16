@@ -27,6 +27,10 @@ func SaveImage(uid string, filename string, contentType string, data []byte) (er
 		uid = "guest"
 	}
 
+	tableName := "imgs_" + year + "_" + month
+
+	db.MySQL.DB.AutoMigrate(&model.Img{TBName: tableName})
+
 	img := &model.Img{
 		Filename:  filename,
 		Type:      contentType,
@@ -38,11 +42,13 @@ func SaveImage(uid string, filename string, contentType string, data []byte) (er
 		Path:      path,
 		Uid:       uid,
 		CreatedAt: timeutils.Now(),
+
+		TBName: tableName,
 	}
 
 	db.MySQL.DB.Create(img)
 
-	notFound := db.MySQL.DB.First(&model.Img{}, "path = ?", img.Path).RecordNotFound()
+	notFound := db.MySQL.DB.First(&model.Img{TBName: tableName}, "path = ?", img.Path).RecordNotFound()
 
 	if notFound {
 		return errors.New("unknown error"), ""
@@ -54,13 +60,18 @@ func SaveImage(uid string, filename string, contentType string, data []byte) (er
 
 func LoadImage(year string, month string, day string, storename string) (error, string, []byte) {
 
-	var img model.Img
+	img := model.Img{
+		TBName: "imgs_" + year + "_" + month,
+	}
 
-	notFound := db.MySQL.DB.First(&img, "year = ? AND month = ? AND day = ? AND storename = ?", year, month, day, storename).RecordNotFound()
+	if !db.MySQL.DB.HasTable(&img) {
+		return errors.New("not found"), "", []byte{}
+	}
+
+	notFound := db.MySQL.DB.First(&img, "day = ? AND storename = ?", day, storename).RecordNotFound()
 
 	if notFound {
 		return errors.New("not found"), "", []byte{}
-
 	}
 
 	return nil, img.Type, img.Data

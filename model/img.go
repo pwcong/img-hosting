@@ -16,4 +16,15 @@ type Img struct {
 	Path      string    `gorm:"type:varchar(255);not null"`
 	Uid       string    `gorm:"type:varchar(100);not null"`
 	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	TBName    string
+}
+
+func (img Img) TableName() string {
+
+	if img.TBName == "" {
+		return "imgs"
+	}
+
+	return img.TBName
+
 }

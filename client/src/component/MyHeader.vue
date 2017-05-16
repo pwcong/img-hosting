@@ -10,6 +10,7 @@
             :to="menu.path">
             {{ menu.text }}
         </router-link>
+        <div class="header-user"></div>
     </div>
 </template>
 <style>
@@ -24,6 +25,8 @@
         display: flex;
         padding-left: 24px;
         padding-right: 24px;
+
+        position: relative;
 
     }
 
@@ -83,6 +86,15 @@
 
     .router-link-exact-active:hover{
         color: #2c3e50;
+    }
+
+    .header-user{
+        height: 100%;
+        width: 200px;
+        border: 1px red solid;
+
+        position: absolute;
+        right: 0px;
     }
 
 
