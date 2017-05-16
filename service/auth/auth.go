@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"time"
 
 	"errors"
 
@@ -18,7 +19,9 @@ func GenerateTokenStringWithUserClaims(uid string) (error, string) {
 
 	userClaims := UserClaims{
 		uid,
-		jwt.StandardClaims{},
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Unix() + Init.Config.Server.Jwt.ExpiredTime,
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)

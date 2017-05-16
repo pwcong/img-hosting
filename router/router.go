@@ -15,6 +15,7 @@ func Init(e *echo.Echo) {
 
 	e.POST(ImgController.URL_API_IMG_UPLOAD, ImgController.Upload)
 	e.GET(ImgController.URL_API_IMG_PUBLIC, ImgController.Get)
+	e.POST(ImgController.URL_API_IMG_LIST, ImgController.List)
 
 	e.POST(UserController.URL_API_USER_LOGIN, UserController.Login)
 	e.POST(UserController.URL_API_USER_REGISTER, UserController.Register)

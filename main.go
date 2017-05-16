@@ -82,6 +82,7 @@ func initRoutes(e *echo.Echo) {
 
 func initDB(db *gorm.DB) {
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.ImgTable{})
 }
 
 func main() {

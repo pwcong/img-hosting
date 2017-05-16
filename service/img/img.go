@@ -9,6 +9,8 @@ import (
 	fileutils "github.com/pwcong/img-hosting/utils/file"
 	timeutils "github.com/pwcong/img-hosting/utils/time"
 	"github.com/pwcong/img-hosting/utils/uuid"
+
+	ImgTableService "github.com/pwcong/img-hosting/service/imgtable"
 )
 
 func SaveImage(uid string, filename string, contentType string, data []byte) (error, string) {
@@ -29,7 +31,10 @@ func SaveImage(uid string, filename string, contentType string, data []byte) (er
 
 	tableName := "imgs_" + year + "_" + month
 
-	db.MySQL.DB.AutoMigrate(&model.Img{TBName: tableName})
+	if !db.MySQL.DB.HasTable(tableName) {
+		db.MySQL.DB.CreateTable(&model.Img{TBName: tableName})
+		ImgTableService.AddImageTable(tableName)
+	}
 
 	img := &model.Img{
 		Filename:  filename,
@@ -75,5 +80,27 @@ func LoadImage(year string, month string, day string, storename string) (error, 
 	}
 
 	return nil, img.Type, img.Data
+
+}
+
+func GetImagesByUID(uid string) (error, []model.Img) {
+
+	var res []model.Img
+
+	_, imgTables := ImgTableService.GetImageTables()
+
+	for _, imgTable := range imgTables {
+
+		var imgs []model.Img
+
+		db.MySQL.DB.Table(imgTable.TBName).Select("filename, year, month, day, storename, path").Find(&imgs, "uid = ?", uid)
+
+		for _, img := range imgs {
+			res = append(res, img)
+		}
+
+	}
+
+	return nil, res
 
 }

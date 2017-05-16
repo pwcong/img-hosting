@@ -15,7 +15,8 @@ type config struct {
 		Host   string
 		Port   int
 		Jwt    struct {
-			SigningKey string `yaml:"signingKey"`
+			SigningKey  string `yaml:"signingKey"`
+			ExpiredTime int64  `yaml:"expiredTime"`
 		}
 		Image struct {
 			Limit       int
@@ -60,6 +61,7 @@ server:
   port: 80
   jwt:
     signingKey: 'img-hosting'
+    expiredTime: 7200000
   image:
     limit: 12
     supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon']
