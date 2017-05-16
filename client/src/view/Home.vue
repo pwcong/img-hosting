@@ -130,7 +130,7 @@
 
     .upload-manager-main{
 
-        z-index: 999;
+        z-index: 100;
 
         background-color: rgba(1, 1, 1, 0);
 
@@ -313,15 +313,19 @@
             },
             onImageItemUpload(e){
 
-                this.$store.dispatch(types.ACTION_IMG_TOUPLOADIMG, {
-                    flag: e.target.getAttribute("flag")
+                let ctx = this;
+
+                ctx.$store.dispatch(types.ACTION_IMG_TOUPLOADIMG, {
+                    flag: e.target.getAttribute("flag"),
+                    uid: ctx.$store.state.user.uid
                 });
 
             },
             onUploadAllImage(e){
 
-                this.$store.dispatch(types.ACTION_IMG_TOUPLOADALLIMG, {
-                    
+                let ctx = this;
+                ctx.$store.dispatch(types.ACTION_IMG_TOUPLOADALLIMG, {
+                    uid: ctx.$store.state.user.uid
                 });
             },
             onUploadManagerDragEnter(e){

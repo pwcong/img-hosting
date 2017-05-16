@@ -5,11 +5,22 @@
             :brand="brand"
             :uid="uid"
             :logined="logined"
-            :onSignInClickListener="handleSignIn"
+            :onSignInClickListener="handleShowLoginOrRegisterBox"
             :onSignOutClickListener="handleSignOut"
             />
         <router-view-container/>
         <my-footer :text="footerText"/>
+        <transition name="fade">
+
+            <login-or-register-box 
+                :logining="logining"
+                :registering="registering"
+                :onRegisterClick="handleRegister"
+                :onLoginClick="handleLogin"
+                :onCancleLoginOrRegisterClick="handleHideLoginOrRegisterBox"
+                v-if="loginOrRegisterBoxActive"
+                />
+        </transition>
     </div>
 </template>
 <style>
@@ -24,6 +35,14 @@
         display: flex;
         flex-direction: column;
     }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .3s
+    }
+
+    .fade-enter, .fade-leave-active {
+        opacity: 0
+    }
 </style>
 <script>
 
@@ -33,6 +52,7 @@
     import MyFooter from '../component/MyFooter.vue';
 
     import RouterViewContainer from '../component/RouterViewContainer.vue';
+    import LoginOrRegisterBox from '../component/LoginOrRegisterBox.vue';
 
     export default {
         data(){
@@ -45,7 +65,7 @@
                 ],
                 brand: "IMG HOSTING",
                 footerText: "Copyleft © 2017  Pwcong",
-                
+                loginOrRegisterBoxActive: false
             }
         },
         computed: {
@@ -54,23 +74,70 @@
             },
             logined(){
                 return this.$store.state.user.logined;
-            }
+            },
+            logining(){
+                return this.$store.state.user.logining;
+            },
+            registering(){
+                return this.$store.state.user.registering;
+            },
         },
         methods: {
-            handleSignIn(e){
+            handleShowLoginOrRegisterBox(e){
                 
+                this.$data.loginOrRegisterBoxActive = true;
 
             },
             handleSignOut(e){
 
                 this.$store.dispatch(types.ACTION_USER_TOLOGOUT);
 
+            },
+            handleHideLoginOrRegisterBox(e){
+                this.$data.loginOrRegisterBoxActive = false;
+
+            },
+            handleLogin(uid, pwd){
+
+                if(uid != '' && pwd != ''){
+                    this.$store.dispatch(types.ACTION_USER_TOLOGIN, {
+                        uid,
+                        pwd
+                    }).then(() => {
+
+                        this.$data.loginOrRegisterBoxActive = false;
+
+
+                    }).catch(() => {
+
+                    })
+                }
+
+            },
+            handleRegister(uid, pwd){
+
+                if(uid != '' && pwd != ''){
+
+                    this.$store.dispatch(types.ACTION_USER_TOREGISTER, {
+                        uid,
+                        pwd
+                    }).then(() => {
+
+                        this.$data.loginOrRegisterBoxActive = false;
+
+
+                    }).catch(() => {
+
+                    })
+                    
+                }
             }
         },
         components: {
             MyHeader,
             MyFooter,
-            RouterViewContainer
+            RouterViewContainer,
+            LoginOrRegisterBox
         }
         
     }

@@ -63,27 +63,35 @@ const store = {
 
         [types.ACTION_USER_TOLOGIN]({ commit }, payload){
 
-            let formData = new FormData();
-            formData.append("uid", payload.uid);
-            formData.append("pwd", payload.pwd);
+            return new Promise((resolve, reject) => {
+                let formData = new FormData();
+                formData.append("uid", payload.uid);
+                formData.append("pwd", payload.pwd);
 
-            commit(types.MUTATION_USER_LOGIN_START);
-            
-            axios.request({
-                url: api.URL_API_USER_LOGIN,
-                method: 'post',
-                data: formData
-
-            }).then( res => {
-                let token = res.data.token;
+                commit(types.MUTATION_USER_LOGIN_START);
                 
-                commit(types.MUTATION_USER_LOGIN_SUCCESS, {
-                    uid: payload.uid,
-                    token: token
+                axios.request({
+                    url: api.URL_API_USER_LOGIN,
+                    method: 'post',
+                    data: formData
+
+                }).then( res => {
+                    let token = res.data.token;
+                    
+                    commit(types.MUTATION_USER_LOGIN_SUCCESS, {
+                        uid: payload.uid,
+                        token: token
+                    });
+
+                    resolve();
+
+                }).catch( err => {
+
+                    commit(types.MUTATION_USER_LOGIN_FAILED);
+
+                    reject();
                 });
 
-            }).catch( err => {
-                commit(types.MUTATION_USER_LOGIN_FAILED);
             });
 
         },
@@ -94,28 +102,37 @@ const store = {
         },
         [types.ACTION_USER_TOREGISTER]({ commit }, payload){
 
-            let formData = new FormData();
-            formData.append("uid", payload.uid);
-            formData.append("pwd", payload.pwd);
+            return new Promise((resolve, reject) => {
 
-            commit(types.MUTATION_USER_REGISTER_START);
-            
-            axios.request({
-                url: api.URL_API_USER_REGISTER,
-                method: 'post',
-                data: formData
+                let formData = new FormData();
+                formData.append("uid", payload.uid);
+                formData.append("pwd", payload.pwd);
 
-            }).then( res => {
-                let token = res.data.token;
+                commit(types.MUTATION_USER_REGISTER_START);
                 
-                commit(types.MUTATION_USER_LOGIN_SUCCESS, {
-                    uid: payload.uid,
-                    token: token
+                axios.request({
+                    url: api.URL_API_USER_REGISTER,
+                    method: 'post',
+                    data: formData
+
+                }).then( res => {
+                    let token = res.data.token;
+                    
+                    commit(types.MUTATION_USER_LOGIN_SUCCESS, {
+                        uid: payload.uid,
+                        token: token
+                    });
+
+                    resolve();
+
+                }).catch( err => {
+                    commit(types.MUTATION_USER_REGISTER_FAILED);
+
+                    reject();
                 });
 
-            }).catch( err => {
-                commit(types.MUTATION_USER_REGISTER_FAILED);
             });
+
 
         }
 
