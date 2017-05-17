@@ -2,8 +2,10 @@
 # IMG-Hosting
 Simple Free Image Hosting
 
-![Demo](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/demo.png)
-![Demo](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/demo2.png)
+![1](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/1.png)
+![2](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/2.png)
+![3](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/3.png)
+![4](https://raw.githubusercontent.com/pwcong/SnapShot/master/img-hosting/4.png)
 
 ## Techs
 **FrontEnd:**
