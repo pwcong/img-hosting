@@ -1,6 +1,6 @@
 server:
   domain: 'localhost'
-  host: 'localhost'
+  host: '0.0.0.0'
   port: 80
   jwt:
     signingKey: 'img-hosting'
@@ -26,7 +26,7 @@ server:
 
 database:
   mysql:
-    user: 'pwcong'
-    password: '123456'
-    address: '192.168.56.101:3306'
+    user: 'root'
+    password: ''
+    address: 'localhost:3306'
     dbname: 'img_hosting'

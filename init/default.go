@@ -57,7 +57,7 @@ type config struct {
 const DEFAULT_CONFIG = `
 server:
   domain: 'localhost'
-  host: 'localhost'
+  host: '0.0.0.0'
   port: 80
   jwt:
     signingKey: 'img-hosting'
