@@ -138,13 +138,16 @@
                     })
                     
                 }
-            }
+            },
         },
         components: {
             MyHeader,
             MyFooter,
             RouterViewContainer,
             LoginOrRegisterBox
+        },
+        mounted: function() {
+            this.$store.dispatch(types.ACTION_USER_CHECK);
         }
         
     }

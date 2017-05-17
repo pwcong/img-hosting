@@ -22,6 +22,8 @@ const store = {
             state.registering = false;
             state.uid = "";
             state.token = "";
+            
+            localStorage.token = '';
         },
         [types.MUTATION_USER_LOGIN_SUCCESS](state, payload){
             state.logined = true;
@@ -29,6 +31,9 @@ const store = {
             state.registering = false;
             state.uid = payload.uid;
             state.token = payload.token;
+
+            localStorage.token = payload.token;
+
         },
         [types.MUTATION_USER_LOGIN_FAILED](state){
             state.logined = false;
@@ -36,6 +41,8 @@ const store = {
             state.registering = false;
             state.uid = "";
             state.token = "";
+
+            localStorage.token = '';
         },
         [types.MUTATION_USER_REGISTER_START](state, payload){
             state.logined = false;
@@ -43,6 +50,9 @@ const store = {
             state.registering = true;
             state.uid = "";
             state.token = "";
+
+            localStorage.token = '';
+
         },
         [types.MUTATION_USER_REGISTER_FAILED](state){
             state.logined = false;
@@ -50,6 +60,8 @@ const store = {
             state.registering = false;
             state.uid = "";
             state.token = "";
+
+            localStorage.token = '';
         },
         [types.MUTATION_USER_LOGOUT](state){
             state.logined = false;
@@ -57,6 +69,8 @@ const store = {
             state.registering = false;
             state.uid = "";
             state.token = "";
+
+            localStorage.token = '';
         }
     },
     actions: {
@@ -93,6 +107,39 @@ const store = {
                 });
 
             });
+
+        },
+        [types.ACTION_USER_CHECK]({ commit }){
+
+            let token = localStorage.token;
+
+            if(token && token != ''){
+
+                let formData = new FormData();
+                formData.append("token", token);
+
+                axios.request({
+                    url: api.URL_API_USER_CHECK,
+                    method: 'post',
+                    data: formData
+
+                }).then( res => {
+                    let uid = res.data.uid;
+                    
+                    commit(types.MUTATION_USER_LOGIN_SUCCESS, {
+                        uid: uid,
+                        token: token
+                    });
+
+
+                }).catch( err => {
+                    commit(types.MUTATION_USER_LOGIN_FAILED);
+                });
+                
+            }else{
+                commit(types.MUTATION_USER_LOGIN_FAILED);
+            }
+
 
         },
         [types.ACTION_USER_TOLOGOUT]({ commit }){

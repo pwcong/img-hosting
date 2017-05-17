@@ -7,3 +7,4 @@ export const URL_API_IMG_LIST = urlPrefix + '/img/list';
 
 export const URL_API_USER_REGISTER =  urlPrefix + "/user/register";
 export const URL_API_USER_LOGIN = urlPrefix + "/user/login";
+export const URL_API_USER_CHECK = urlPrefix + "/user/check";

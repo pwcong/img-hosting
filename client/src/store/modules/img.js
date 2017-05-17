@@ -17,9 +17,23 @@ const store = {
             //     progress: 0,
             //     url: ''
             // },
+        ],
+        ownList: [
+            // {
+            //     "filename": "59432931_p0.jpg",
+            //     "year": "2017",
+            //     "month": "05",
+            //     "day": "16",
+            //     "storename": "b45b2db6425f.jpg",
+            //     "path": "/2017/05/16/b45b2db6425f.jpg",
+            //     "url": "http://localhost/public/2017/05/16/b45b2db6425f.jpg"
+            // }
         ]
     },
     getters: {
+
+        ownList: state => state.ownList,
+        ownListLenght: state => state.ownList.length,
 
         imgList: state => state.imgList,
         imgListLength: state => state.imgList.length,
@@ -56,7 +70,10 @@ const store = {
                     return;
                 }
             });
-        }
+        },
+        [types.MUTATION_IMG_SETOWNIMGS](state, payload){
+            state.ownList = payload.imgs;
+        },
         
     },
     actions: {
@@ -112,6 +129,30 @@ const store = {
                 }
 
             });
+
+        },
+        [types.ACTION_IMG_GETLIST]({commit, state}, payload){
+
+            let formData = new FormData();
+            formData.append('token', payload.token);
+
+            axios.request({
+                url: api.URL_API_IMG_LIST,
+                method: 'post',
+                data: formData
+
+            }).then( res => {
+                let imgs = res.data.imgs;
+
+                commit(types.MUTATION_IMG_SETOWNIMGS, {
+                    imgs
+                });
+
+            }).catch( err => {
+                
+            });
+
+
 
         }
 
