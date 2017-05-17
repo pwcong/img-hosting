@@ -154,7 +154,19 @@
 
         overflow: auto;
     }
+    
+    .upload-manager-main::-webkit-scrollbar{
 
+        width: 4px;
+        background-color: #ccc;
+
+    }
+
+    .upload-manager-main::-webkit-scrollbar-thumb{
+    
+        background-color: lightseagreen;
+        
+    }
     .upload-tools{
 
         width: 100%;

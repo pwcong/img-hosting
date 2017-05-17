@@ -30,6 +30,19 @@
         color: #2c3e50;
     }
 
+    .router-view-container::-webkit-scrollbar{
+
+        width: 4px;
+        background-color: #ccc;
+
+    }
+
+    .router-view-container::-webkit-scrollbar-thumb{
+    
+        background-color: lightseagreen;
+        
+    }
+
 </style>
 <script>
 

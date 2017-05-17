@@ -10,15 +10,18 @@ Simple Free Image Hosting
 * Vue
 * Vuex
 * Vue-Router
-* Marked
+* marked
+* axios
 
 **BackEnd(Golang):**
 * Echo
 * gorm
 * jwt-go
 
+**Database:**
+* MySQL
 
 ## Todos
 - [x] Upload Image & Generate Public Image URL
-- [ ] User Register/Login
-- [ ] Manage Uploaded Images
+- [x] User Register/Login
+- [x] Manage Uploaded Images

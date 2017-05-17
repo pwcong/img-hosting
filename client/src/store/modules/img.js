@@ -32,11 +32,11 @@ const store = {
     },
     getters: {
 
-        ownList: state => state.ownList,
-        ownListLenght: state => state.ownList.length,
-
         imgList: state => state.imgList,
         imgListLength: state => state.imgList.length,
+
+        ownList: state => state.ownList,
+        ownListLength: state => state.ownList.length,
 
         canUploadAll: state => {
             for(let i = 0; i < state.imgList.length; i++){
@@ -71,8 +71,24 @@ const store = {
                 }
             });
         },
+        [types.MUTATION_IMG_REMOVEOWNIMG](state, payload){
+            state.ownList.forEach((img, index) => {
+                if(img.year == payload.year && 
+                    img.month == payload.month &&
+                    img.day == payload.day &&
+                    img.storename == payload.storename){
+                    state.ownList.splice(index, 1);
+                    return;
+                }
+            });
+        },
         [types.MUTATION_IMG_SETOWNIMGS](state, payload){
-            state.ownList = payload.imgs;
+
+            if(payload.imgs)
+                state.ownList = payload.imgs;
+            else
+                state.ownList = [];
+
         },
         
     },
@@ -152,7 +168,33 @@ const store = {
                 
             });
 
+        },
+        [types.ACTION_IMG_REMOVEOWN]({commit, state}, payload){
 
+            let formData = new FormData();
+            formData.append('token', payload.token);
+            formData.append('year', payload.year);
+            formData.append('month', payload.month);
+            formData.append('day', payload.day);
+            formData.append('storename', payload.storename);
+
+            axios.request({
+                url: api.URL_API_IMG_DELETE,
+                method: 'post',
+                data: formData
+
+            }).then( res => {
+
+                commit(types.MUTATION_IMG_REMOVEOWNIMG, {
+                    year: payload.year,
+                    month: payload.month,
+                    day: payload.day,
+                    storename: payload.storename,
+                });
+
+            }).catch( err => {
+                
+            });
 
         }
 
