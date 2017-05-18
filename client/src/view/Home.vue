@@ -19,10 +19,10 @@
                     :uploading="img.uploading"
                     :uploaded="img.uploaded"
                     :progress="img.progress"
-                    :onRemoveButtonClick="onImageItemRemove"
-                    :onUploadButtonClick="onImageItemUpload"
+                    :onRemoveButtonClickListener="handleRemoveImage"
+                    :onUploadButtonClickClickListener="handleUploadImage"
                     :img-url="img.url"
-                    :onShowImageURL="onImageItemInfo"
+                    :onShowImageURLClickListener="handleShowImageInfo"
                     />
             </div>
             <div v-if="imgListLength <= 0" class="upload-manager-tips">
@@ -316,19 +316,19 @@
             'canUploadAll'
         ]),
         methods: {
-            onImageItemRemove(e){
+            handleRemoveImage(flag){
 
                 this.$store.commit(types.MUTATION_IMG_REMOVEIMG, {
-                    flag: e.target.getAttribute("flag")
+                    flag
                 });
 
             },
-            onImageItemUpload(e){
+            handleUploadImage(flag){
 
                 let ctx = this;
 
                 ctx.$store.dispatch(types.ACTION_IMG_TOUPLOADIMG, {
-                    flag: e.target.getAttribute("flag"),
+                    flag: flag,
                     uid: ctx.$store.state.user.uid
                 });
 
@@ -381,8 +381,8 @@
                 }
 
             },
-            onImageItemInfo(e){
-                this.$data.msg = e.target.getAttribute("img-url");
+            handleShowImageInfo(url){
+                this.$data.msg = url;
             },
             copyMsg(e){
 

@@ -8,7 +8,6 @@
                 class="fa fa-upload" 
                 v-if="!uploading && !uploaded"
                 @click="onUploadButtonClick"
-                :flag="flag"
                 >
             </span>
             <span 
@@ -18,13 +17,11 @@
             </span>
             <span 
                 @click="onShowImageURL"
-                :img-url="imgUrl"
                 class="fa fa-info-circle" 
                 v-if="!uploading && uploaded"
                 >
             </span>
             <span 
-                :flag="flag"
                 class="fa fa-trash" 
                 v-if="!uploading"
                 @click="onRemoveButtonClick"
@@ -171,24 +168,38 @@
                 require: true
 
             },
-            onUploadButtonClick: {
+            onRemoveButtonClickListener: {
                 type: Function,
-                default: function(e){
-                    console.log("upload");
+                default: function(flag){
+                    console.log(flag);
                 }
             },
-            onRemoveButtonClick: {
+            onShowImageURLClickListener: {
                 type: Function,
-                default: function(e){
-                    console.log("remove");
+                default: function(url){
+                    console.log(url);
                 }
             },
-            onShowImageURL: {
+            onUploadButtonClickClickListener: {
                 type: Function,
-                default: function(e){
-                    console.log("show");
+                default: function(flag){
+                    console.log(flag);
                 }
-            }
+            },
+        },
+        methods: {
+
+            onShowImageURL(e){
+                this.$props.onShowImageURLClickListener(this.$props.imgUrl);
+            },
+            onRemoveButtonClick(e){
+                this.$props.onRemoveButtonClickListener(this.$props.flag);
+                    
+            },
+            onUploadButtonClick(e){
+                this.$props.onUploadButtonClickClickListener(this.$props.flag);
+                    
+            },
         }
         
     }

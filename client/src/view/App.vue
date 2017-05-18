@@ -21,6 +21,10 @@
                 v-if="loginOrRegisterBoxActive"
                 />
         </transition>
+        <tips 
+            :showTips="showTips"
+            :tipsContent="tipsContent"
+            :tipsType="tipsType"/>
     </div>
 </template>
 <style>
@@ -55,6 +59,7 @@
 
     import RouterViewContainer from '../component/RouterViewContainer.vue';
     import LoginOrRegisterBox from '../component/LoginOrRegisterBox.vue';
+    import Tips from '../component/Tips.vue';
 
     export default {
         data(){
@@ -87,6 +92,15 @@
             registering(){
                 return this.$store.state.user.registering;
             },
+            showTips(){
+                return this.$store.state.tip.show;
+            },
+            tipsContent(){
+                return this.$store.state.tip.content;
+            },
+            tipsType(){
+                return this.$store.state.tip.type;
+            }
         },
         methods: {
             handleShowLoginOrRegisterBox(e){
@@ -99,6 +113,11 @@
                 this.$router.push("/");
                 this.$store.dispatch(types.ACTION_USER_TOLOGOUT);
 
+                this.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
+                    type: 0,
+                    content: '已成功登出'
+                })
+
             },
             handleHideLoginOrRegisterBox(e){
                 this.$data.loginOrRegisterBoxActive = false;
@@ -106,35 +125,55 @@
             },
             handleLogin(uid, pwd){
 
+                let ctx = this;
+
                 if(uid != '' && pwd != ''){
-                    this.$store.dispatch(types.ACTION_USER_TOLOGIN, {
+                    ctx.$store.dispatch(types.ACTION_USER_TOLOGIN, {
                         uid,
                         pwd
                     }).then(() => {
 
-                        this.$data.loginOrRegisterBoxActive = false;
+                        ctx.$data.loginOrRegisterBoxActive = false;
 
+                        ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
+                            type: 1,
+                            content: '已成功登陆'
+                        })
 
                     }).catch(() => {
 
+                        ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
+                            type: 2,
+                            content: '登陆失败，密码错误或用户不存在'
+                        });
                     })
                 }
 
             },
             handleRegister(uid, pwd){
 
+                let ctx = this;
+
                 if(uid != '' && pwd != ''){
 
-                    this.$store.dispatch(types.ACTION_USER_TOREGISTER, {
+                    ctx.$store.dispatch(types.ACTION_USER_TOREGISTER, {
                         uid,
                         pwd
                     }).then(() => {
 
-                        this.$data.loginOrRegisterBoxActive = false;
+                        ctx.$data.loginOrRegisterBoxActive = false;
 
+                        ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
+                            type: 1,
+                            content: '注册成功'
+                        });
 
                     }).catch(() => {
 
+                        ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
+                            type: 2,
+                            content: '注册失败，用户已存在或服务器出了小差'
+                        });
                     })
                     
                 }
@@ -144,7 +183,8 @@
             MyHeader,
             MyFooter,
             RouterViewContainer,
-            LoginOrRegisterBox
+            LoginOrRegisterBox,
+            Tips
         },
         mounted: function() {
             this.$store.dispatch(types.ACTION_USER_CHECK);
