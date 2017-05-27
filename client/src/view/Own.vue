@@ -13,7 +13,7 @@
             />
         
         <div class="content-own-tips" v-if="ownListLength < 1">
-            <h1>Your have no own picture</h1>
+            <h1>You have no own picture</h1>
         </div>
         
     </div>
