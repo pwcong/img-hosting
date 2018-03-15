@@ -17,7 +17,7 @@ Simple Free Image Hosting
 ## Usage
 1. Be sure your operating system is 64 bit, and is running the MySQL Database Service
 
-2. Modify `./config/config.yaml`
+2. Modify `./config/default.toml`
 
 3. Execute the binary file
     * `Windows` execute the command `./start.exe` in `CMD`
@@ -28,43 +28,30 @@ Simple Free Image Hosting
 
 ## Configuration
 
-**The default configuration is `./config/config.yaml`**
+**The default configuration is `./config/default.toml`**
 
-Here is content of the default configuration (format is `yaml`):
+Here is content of the default configuration (format is `toml`):
 
-```
-server:
-  domain: 'localhost' # server domain, which decide the url of image. eg. http://${domain}/public/2017/01/01/abc.jpg
-  host: '0.0.0.0'     # server listening ip address 
-  port: 80            # server listening port
-  jwt:
-    signingKey: 'img-hosting' # token key. when you restart the service, reset it to another value to avoid user token leaks
-    expiredTime: 7200000      # token exporation time (ms)
-  image:
-    limit: 12   # determines how long the image file name will be generated
-    supportExts: ['image/jpeg', 'image/gif', 'image/png', 'image/tiff', 'image/x-icon'] # IMG-Hosting 服务支持文件格式
-  middlewares:
-    cors:
-      active: true  # determines whether the middleware is enabled
-      allowOrigins: ['*']   # CORS support domains
-      allowMethods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE']   # service supported HTTP method
-    gzip:
-      active: true
-      level: 5 # compress level # compress level. -1 <= level <= 9
-    log:
-      active: true
-      format: '${time_rfc3339_nano} ${remote_ip} ${host} ${method} ${uri} ${status} ${latency_human} ${bytes_in} ${bytes_out}'  # 日志打印格式
-      output: 'stdout'  # log output mide. value can be 'stdout' or 'file' 
-    limit:
-      active: true
-      size: '4MB' # limit the length of request body. value must follow the format 'NXB' or 'NX' where N is number and X can be 'K' 'M' 'G' 'T' 'P'
+```toml
+[server]
+host = "0.0.0.0"
+port = 8080
 
-database:
-  mysql:
-    user: 'root'    # username
-    password: ''    # password
-    address: 'localhost:3306'   # address of MySQL Database Service
-    dbname: 'img_hosting'   # database name
+[middlewares]
+
+    [middlewares.cors]
+    active = true
+    [middlewares.logger]
+    active = true
+
+[databases]
+
+    [databases.mysql]
+    host = "127.0.0.1"
+    port = 3306
+    username = "root"
+    password = "root"
+    dbname = "img_hosting"
 
 ```
 
@@ -83,6 +70,7 @@ database:
 
 **Database:**
 * MySQL
+* Redis
 
 ## Todos
 - [x] Upload Image & Generate Public Image URL

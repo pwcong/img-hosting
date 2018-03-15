@@ -1,30 +1,14 @@
 package model
 
-import (
-	"time"
-)
+import "time"
 
 type Img struct {
-	ID        uint      `gorm:"AUTO_INCREMENT;primary_key;unsigned"`
+	ID        string    `gorm:"type:varchar(255);primary_key;not null"`
 	Filename  string    `gorm:"type:varchar(255);not null"`
-	Type      string    `gorm:"type:varchar(100);not null"`
-	Data      []byte    `gorm:"type:mediumblob;not null"`
-	Year      string    `gorm:"type:varchar(10);not null"`
-	Month     string    `gorm:"type:varchar(5);not null"`
-	Day       string    `gorm:"type:varchar(5);not null"`
-	Storename string    `gorm:"type:varchar(255);not null"`
-	Path      string    `gorm:"type:varchar(255);not null"`
-	Uid       string    `gorm:"type:varchar(100);not null"`
+	Year      string    `gorm:"type:varchar(255);not null"`
+	Month     string    `gorm:"type:varchar(255);not null"`
+	Date      string    `gorm:"type:varchar(255);not null"`
+	ExtName   string    `gorm:"type:varchar(255);not null"`
 	CreatedAt time.Time `gorm:"type:datetime;not null"`
-	TBName    string    `gorm:"-"`
-}
-
-func (img Img) TableName() string {
-
-	if img.TBName == "" {
-		return "imgs"
-	}
-
-	return img.TBName
-
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
 }

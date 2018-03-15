@@ -2,105 +2,91 @@ package main
 
 import (
 	"log"
-	"os"
 	"strconv"
-
-	"path/filepath"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/pwcong/img-hosting/config"
 	"github.com/pwcong/img-hosting/db"
-	Init "github.com/pwcong/img-hosting/init"
 	"github.com/pwcong/img-hosting/model"
 	"github.com/pwcong/img-hosting/router"
+	"github.com/pwcong/img-hosting/utils"
 )
 
-func initMiddlewares(e *echo.Echo) {
+func initMiddlewares(e *echo.Echo, conf *config.Config) {
 
-	// initialize gzip middleware configuration
-	if Init.Config.Server.Middlewares.Gzip.Active {
+	middlewaresConfig := conf.Middlewares
 
-		e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-			Level: Init.Config.Server.Middlewares.Gzip.Level,
-		}))
+	loggerConfig, ok := middlewaresConfig["logger"]
+	if ok && loggerConfig.Active {
+		e.Use(middleware.Logger())
 	}
 
-	// initialize log middleware configuration
-	if Init.Config.Server.Middlewares.Log.Active {
+	corsConfig, ok := middlewaresConfig["cors"]
+	if ok && corsConfig.Active {
+		e.Use(middleware.CORS())
 
-		if Init.Config.Server.Middlewares.Log.Output == "file" {
-
-			logDir := filepath.Join(filepath.Dir(os.Args[0]), "log")
-			if _, err := os.Stat(logDir); err != nil {
-				err := os.MkdirAll(logDir, 0666)
-				if err != nil {
-					log.Fatal(err.Error())
-				}
-
-			}
-
-			logPath := filepath.Join(logDir, "server.log")
-			logOutput, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND, 0666)
-			if err != nil {
-				log.Fatal(err.Error())
-			}
-
-			e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-				Output: logOutput,
-				Format: Init.Config.Server.Middlewares.Log.Format + "\n",
-			}))
-
-		} else if Init.Config.Server.Middlewares.Log.Output == "stdout" {
-			e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-				Format: Init.Config.Server.Middlewares.Log.Format + "\n",
-			}))
-		}
-	}
-
-	// initialize cors middleware configuration
-	if Init.Config.Server.Middlewares.Cors.Active {
-
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: Init.Config.Server.Middlewares.Cors.AllowOrigins,
-			AllowMethods: Init.Config.Server.Middlewares.Cors.AllowMethods,
-		}))
-	}
-
-	// initialize bodyLimit moddleware configuration
-	if Init.Config.Server.Middlewares.Limit.Active {
-		e.Use(middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{
-			Limit: Init.Config.Server.Middlewares.Limit.Size,
-		}))
 	}
 
 }
 
-func initRoutes(e *echo.Echo) {
-	router.Init(e)
+func initRoutes(e *echo.Echo, conf *config.Config, db *gorm.DB) {
+
+	router.Init(e, conf, db)
+
 }
 
 func initDB(db *gorm.DB) {
+	db.AutoMigrate(&model.Img{})
 	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.ImgTable{})
 }
 
 func main() {
 
-	db.MySQL.Open(
-		Init.Config.Database.MySQL.User,
-		Init.Config.Database.MySQL.Password,
-		Init.Config.Database.MySQL.Address,
-		Init.Config.Database.MySQL.DBName)
+	// 初始化配置
+	conf, err := config.Initialize()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	defer db.MySQL.Close()
+	mySQLConfig, ok := conf.Databases["mysql"]
+	if !ok {
+		log.Fatal("Can not load configuration of MySQL")
+	}
 
-	initDB(db.MySQL.DB)
+	orm := db.ORM{DB: nil, Name: "mysql"}
+
+	orm.Open(
+		mySQLConfig.Username,
+		mySQLConfig.Password,
+		mySQLConfig.Host+":"+strconv.Itoa(mySQLConfig.Port),
+		mySQLConfig.DBName)
+
+	defer orm.Close()
+
+	initDB(orm.DB)
 
 	e := echo.New()
+	// 初始化中间件
+	initMiddlewares(e, &conf)
+	// 初始化路由
+	initRoutes(e, &conf, orm.DB)
 
-	initMiddlewares(e)
-	initRoutes(e)
+	// 运行服务
+	if conf.Server.Port == 80 {
+		e.Logger.Fatal(e.Start(conf.Server.Host))
+	} else {
+		e.Logger.Fatal(e.Start(conf.Server.Host + ":" + strconv.Itoa(conf.Server.Port)))
+	}
 
-	e.Logger.Fatal(e.Start(Init.Config.Server.Host + ":" + strconv.Itoa(Init.Config.Server.Port)))
+}
+
+func init() {
+	// 初始化目录
+	err := utils.MkdirIFNotExist("public")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

@@ -1,0 +1,44 @@
+{
+  "name": "img-hosting-fe",
+  "version": "1.0.0",
+  "description": "FrontEnd of IMG Hosting System.",
+  "main": "./src/app.js",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "dev": "npm run clean & webpack-dev-server --open",
+    "build": "npm run clean & cross-env NODE_ENV=production webpack --progress"
+  },
+  "keywords": [
+    "Vue"
+  ],
+  "author": "pwcong@foxmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-1": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "node-sass": "^4.5.3",
+    "postcss-cssnext": "^3.0.2",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.0",
+    "vue-loader": "^13.3.0",
+    "vue-template-compiler": "^2.5.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.3"
+  },
+  "dependencies": {
+    "axios": "^0.17.0",
+    "cross-env": "^5.1.0",
+    "marked": "^0.3.17",
+    "rimraf": "^2.6.2",
+    "vue": "^2.5.3",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.0"
+  }
+}
