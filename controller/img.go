@@ -75,7 +75,7 @@ func (ctx *ImgController) GetPrivateImages(c echo.Context) error {
 		return BaseResponse(c, STATUS_OK, err.Error(), struct{}{})
 	}
 
-	var _imgs []ImgItem
+	var _imgs []interface{}
 
 	for _, img := range imgs {
 		_imgs = append(_imgs, ImgItem{
@@ -84,10 +84,8 @@ func (ctx *ImgController) GetPrivateImages(c echo.Context) error {
 		})
 	}
 
-	return BaseResponse(c, STATUS_OK, "query successfully", struct {
-		Imgs []ImgItem `json:"imgs"`
-	}{
-		Imgs: _imgs,
-	})
+	res := Pager(c, _imgs)
+
+	return BaseResponse(c, STATUS_OK, "query successfully", res)
 
 }
