@@ -11,13 +11,29 @@ type BaseService struct {
 	DB   *gorm.DB
 }
 
-func (ctx *BaseService) Log(ip string, action string) error {
+const (
+	INFO = iota
+	WARN
+	ERROR
+)
 
-	ctx.DB.Create(model.Log{
+func (ctx *BaseService) Log(level uint, ip string, action string) {
+	db := ctx.DB
+
+	db.Create(&model.Log{
+		Level:  level,
 		IP:     ip,
 		Action: action,
 	})
 
-	return nil
+}
 
+func (ctx *BaseService) Info(ip string, action string) {
+	ctx.Log(INFO, ip, action)
+}
+func (ctx *BaseService) Warn(ip string, action string) {
+	ctx.Log(INFO, ip, action)
+}
+func (ctx *BaseService) Error(ip string, action string) {
+	ctx.Log(INFO, ip, action)
 }

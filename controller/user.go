@@ -22,6 +22,8 @@ func (ctx *UserController) Login(c echo.Context) error {
 
 	service := service.UserService{Base: ctx.Base.Service}
 
+	service.Base.Info(c.RealIP(), "login")
+
 	uf := new(UserForm)
 	if err := c.Bind(uf); err != nil {
 		return BaseResponse(c, STATUS_ERROR, "invalid params", struct{}{})
@@ -71,6 +73,8 @@ func (ctx *UserController) Login(c echo.Context) error {
 func (ctx *UserController) Register(c echo.Context) error {
 
 	service := service.UserService{Base: ctx.Base.Service}
+
+	service.Base.Info(c.RealIP(), "register")
 
 	uf := new(UserForm)
 	if err := c.Bind(uf); err != nil {

@@ -13,6 +13,8 @@ func (ctx *ImgController) Upload(c echo.Context) error {
 
 	service := service.ImgService{Base: ctx.Base.Service}
 
+	service.Base.Info(c.RealIP(), "upload image")
+
 	file, err := c.FormFile("img")
 	if file == nil || err != nil {
 		return BaseResponse(c, STATUS_OK, err.Error(), struct{}{})
@@ -34,6 +36,8 @@ func (ctx *ImgController) Upload(c echo.Context) error {
 func (ctx *ImgController) PrivateUpload(c echo.Context) error {
 
 	service := service.ImgService{Base: ctx.Base.Service}
+
+	service.Base.Info(c.RealIP(), "upload private image")
 
 	file, err := c.FormFile("img")
 	if file == nil || err != nil {
