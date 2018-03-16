@@ -1,9 +1,16 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/labstack/echo"
 	"github.com/pwcong/img-hosting/service"
 )
+
+type ImgItem struct {
+	URL       string    `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+}
 
 type ImgController struct {
 	Base *BaseController
@@ -53,6 +60,34 @@ func (ctx *ImgController) PrivateUpload(c echo.Context) error {
 		URL string `json:"url"`
 	}{
 		URL: "/public/" + img.Year + "/" + img.Month + "/" + img.Date + "/" + img.Symbol + "." + img.ExtName,
+	})
+
+}
+
+func (ctx *ImgController) GetPrivateImages(c echo.Context) error {
+
+	service := service.ImgService{Base: ctx.Base.Service}
+
+	service.Base.Info(c.RealIP(), "get private images")
+
+	imgs, err := service.GetPrivateImages(int(c.Get("id").(float64)))
+	if err != nil {
+		return BaseResponse(c, STATUS_OK, err.Error(), struct{}{})
+	}
+
+	var _imgs []ImgItem
+
+	for _, img := range imgs {
+		_imgs = append(_imgs, ImgItem{
+			URL:       "/public/" + img.Year + "/" + img.Month + "/" + img.Date + "/" + img.Symbol + "." + img.ExtName,
+			CreatedAt: img.CreatedAt,
+		})
+	}
+
+	return BaseResponse(c, STATUS_OK, "query successfully", struct {
+		Imgs []ImgItem `json:"imgs"`
+	}{
+		Imgs: _imgs,
 	})
 
 }

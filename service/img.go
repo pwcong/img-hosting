@@ -110,3 +110,21 @@ func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id int) (mod
 	return img, nil
 
 }
+
+func (ctx *ImgService) GetPrivateImages(id int) ([]model.Img, error) {
+
+	db := ctx.Base.DB
+
+	var user model.User
+
+	notFound := db.Where("id = ?", id).First(&user).RecordNotFound()
+	if notFound {
+		return []model.Img{}, errors.New("user is not existed")
+	}
+
+	var imgs []model.Img
+	db.Model(&user).Related(&imgs, "Imgs")
+
+	return imgs, nil
+
+}

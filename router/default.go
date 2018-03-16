@@ -26,6 +26,7 @@ func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 	e.GET("/", indexController.Default)
 	e.POST("/img/upload", imgController.Upload)
 	e.POST("/img/upload/private", imgController.PrivateUpload, authMiddleware.AuthToken)
+	e.GET("/imgs", imgController.GetPrivateImages, authMiddleware.AuthToken)
 
 	e.POST("/user/login", userController.Login)
 	e.POST("/user/register", userController.Register)
