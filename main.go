@@ -25,9 +25,7 @@ func initRoutes(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 }
 
 func initDB(db *gorm.DB) {
-	db.AutoMigrate(&model.Img{})
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Log{})
+	db.AutoMigrate(&model.Img{}, &model.User{}, &model.Log{})
 }
 
 func main() {

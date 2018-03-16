@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/pwcong/img-hosting/config"
 	"github.com/pwcong/img-hosting/controller"
+	"github.com/pwcong/img-hosting/middleware"
 	"github.com/pwcong/img-hosting/service"
 )
 
@@ -13,7 +14,7 @@ func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 	e.Static("/", "view/dist")
 	e.Static("/public", "public")
 
-	// authMiddleware := middleware.AuthMiddleware{Conf: conf}
+	authMiddleware := middleware.AuthMiddleware{Conf: conf}
 
 	baseService := &service.BaseService{Conf: conf, DB: db}
 	baseController := &controller.BaseController{Conf: conf, Service: baseService}
@@ -24,6 +25,7 @@ func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 
 	e.GET("/", indexController.Default)
 	e.POST("/img/upload", imgController.Upload)
+	e.POST("/img/upload/private", imgController.PrivateUpload, authMiddleware.AuthToken)
 
 	e.POST("/user/login", userController.Login)
 	e.POST("/user/register", userController.Register)

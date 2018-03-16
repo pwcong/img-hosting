@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
@@ -32,60 +33,80 @@ func GetExtension(filename string) string {
 	return res[1]
 }
 
-func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (string, error) {
+func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) {
 	src, err := file.Open()
 	if err != nil {
-		return "", err
-
+		return model.Img{}, err
 	}
 
 	defer src.Close()
 
 	buffer, err := ioutil.ReadAll(src)
 	if err != nil {
-		return "", err
+		return model.Img{}, err
 	}
 
 	h := md5.New()
 	_, err = h.Write(buffer)
 	if err != nil {
-		return "", err
+		return model.Img{}, err
 	}
 
-	id := hex.EncodeToString(h.Sum(nil))
+	symbol := hex.EncodeToString(h.Sum(nil))
 
 	var img model.Img
 
 	db := ctx.Base.DB
 	now := time.Now()
 
-	notFound := db.Where("id = ?", id).First(&img).RecordNotFound()
+	notFound := db.Where("symbol = ?", symbol).First(&img).RecordNotFound()
 	if notFound {
 		img = model.Img{
-			ID:        id,
-			Filename:  file.Filename,
-			Year:      now.Format("2006"),
-			Month:     now.Format("01"),
-			Date:      now.Format("02"),
-			ExtName:   GetExtension(file.Filename),
-			CreatedAt: now,
-			UpdatedAt: now,
+			Symbol:   symbol,
+			Filename: file.Filename,
+			Year:     now.Format("2006"),
+			Month:    now.Format("01"),
+			Date:     now.Format("02"),
+			ExtName:  GetExtension(file.Filename),
 		}
 
 		dir := filepath.Join(filepath.Dir(os.Args[0]), "public/"+img.Year+"/"+img.Month+"/"+img.Date)
 
 		err = os.MkdirAll(dir, 0666)
 		if err != nil {
-			return "", err
+			return model.Img{}, err
 		}
 
-		err = ioutil.WriteFile(filepath.Join(dir, img.ID+"."+img.ExtName), buffer, 0666)
+		err = ioutil.WriteFile(filepath.Join(dir, img.Symbol+"."+img.ExtName), buffer, 0666)
 		if err != nil {
-			return "", err
+			return model.Img{}, err
 		}
 
-		db.Create(img)
+		db.Create(&img)
 	}
 
-	return "/public/" + img.Year + "/" + img.Month + "/" + img.Date + "/" + img.ID + "." + img.ExtName, nil
+	return img, nil
+}
+
+func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id int) (model.Img, error) {
+
+	db := ctx.Base.DB
+
+	var user model.User
+
+	notFound := db.Where("id = ?", id).First(&user).RecordNotFound()
+	if notFound {
+		return model.Img{}, errors.New("user is not existed")
+	}
+
+	img, err := ctx.SaveImage(file)
+
+	if err != nil {
+		return model.Img{}, err
+	}
+
+	db.Model(&user).Association("Imgs").Append([]model.Img{img})
+
+	return img, nil
+
 }
