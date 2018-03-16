@@ -41,6 +41,7 @@ func (ctx *AuthMiddleware) AuthToken(next echo.HandlerFunc) echo.HandlerFunc {
 				return BaseResponse(c, STATUS_ERROR, "invalid token", struct{}{})
 			} else {
 				c.Set("id", id)
+				c.Set("token", tokenString)
 			}
 		} else {
 			return BaseResponse(c, STATUS_ERROR, "invalid token", struct{}{})

@@ -69,55 +69,20 @@ func (ctx *UserController) Login(c echo.Context) error {
 	})
 
 }
+func (ctx *ImgController) CheckToken(c echo.Context) error {
 
-func (ctx *UserController) Register(c echo.Context) error {
+	service := service.ImgService{Base: ctx.Base.Service}
 
-	service := service.UserService{Base: ctx.Base.Service}
+	service.Base.Info(c.RealIP(), "check token")
 
-	service.Base.Info(c.RealIP(), "register")
-
-	uf := new(UserForm)
-	if err := c.Bind(uf); err != nil {
-		return BaseResponse(c, STATUS_ERROR, "invalid params", struct{}{})
-	}
-
-	if uf.Username == "" || uf.Password == "" {
-		return BaseResponse(c, STATUS_ERROR, "params not enough", struct{}{})
-	}
-
-	user, err := service.Register(uf.Username, uf.Password)
-	if err != nil {
-		return BaseResponse(c, STATUS_ERROR, err.Error(), struct{}{})
-	}
-
-	now := time.Now()
-
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["id"] = user.ID
-	expiredTime := ctx.Base.Conf.Auth.ExpiredTime
-	claims["exp"] = now.Add(time.Second * time.Duration(expiredTime)).Unix()
-
-	t, err := token.SignedString([]byte(ctx.Base.Conf.Auth.Secret))
-	if err != nil {
-		BaseResponse(c, STATUS_ERROR, err.Error(), struct{}{})
-	}
-
-	cookie := new(http.Cookie)
-	cookie.Name = "token"
-	cookie.Value = t
-	cookie.Expires = now.Add(time.Duration(expiredTime/3600) * time.Hour)
-
-	c.SetCookie(cookie)
-
-	return BaseResponse(c, STATUS_OK, "register successfully", struct {
+	return BaseResponse(c, STATUS_OK, "upload successfully", struct {
 		ID       uint   `json:"id"`
 		Username string `json:"username"`
 		Token    string `json:"token"`
 	}{
-		ID:       user.ID,
+		ID:       uint(c.Get("id").(float64)),
 		Username: user.Username,
-		Token:    t,
+		Token:    c.Get("token").(string),
 	})
 
 }

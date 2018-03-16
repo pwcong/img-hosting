@@ -16,7 +16,7 @@ func (ctx *UserService) Register(username string, password string) (model.User, 
 
 	notFound := db.Where("username = ?", username).First(&model.User{}).RecordNotFound()
 	if !notFound {
-		return model.User{}, errors.New("user existed")
+		return model.User{}, errors.New("user is existed")
 	}
 
 	salt, err := uuid.NewV1()
@@ -43,7 +43,7 @@ func (ctx *UserService) Login(username string, password string) (model.User, err
 
 	notFound := db.Where("username = ?", username).First(&user).RecordNotFound()
 	if notFound {
-		return model.User{}, errors.New("user not existed")
+		return model.User{}, errors.New("user is not existed")
 	}
 
 	salt, err := uuid.FromString(user.PasswordSalt)
@@ -54,6 +54,19 @@ func (ctx *UserService) Login(username string, password string) (model.User, err
 
 	if _password != user.Password {
 		return model.User{}, errors.New("incorrect password")
+	}
+
+	return user, nil
+}
+
+func (ctx *UserService) findByID(id uint) (model.User, error) {
+	db := ctx.Base.DB
+
+	var user model.User
+
+	notFound := db.Where("id = ?", id).First(&user).RecordNotFound()
+	if notFound {
+		return model.User{}, errors.New("user is not existed")
 	}
 
 	return user, nil
