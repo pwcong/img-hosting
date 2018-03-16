@@ -6,29 +6,16 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"github.com/pwcong/img-hosting/config"
 	"github.com/pwcong/img-hosting/db"
+	"github.com/pwcong/img-hosting/middleware"
 	"github.com/pwcong/img-hosting/model"
 	"github.com/pwcong/img-hosting/router"
 	"github.com/pwcong/img-hosting/utils"
 )
 
 func initMiddlewares(e *echo.Echo, conf *config.Config) {
-
-	middlewaresConfig := conf.Middlewares
-
-	loggerConfig, ok := middlewaresConfig["logger"]
-	if ok && loggerConfig.Active {
-		e.Use(middleware.Logger())
-	}
-
-	corsConfig, ok := middlewaresConfig["cors"]
-	if ok && corsConfig.Active {
-		e.Use(middleware.CORS())
-
-	}
-
+	middleware.Init(e, conf)
 }
 
 func initRoutes(e *echo.Echo, conf *config.Config, db *gorm.DB) {
@@ -40,6 +27,7 @@ func initRoutes(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 func initDB(db *gorm.DB) {
 	db.AutoMigrate(&model.Img{})
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Log{})
 }
 
 func main() {

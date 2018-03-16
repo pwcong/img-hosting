@@ -11,7 +11,11 @@ import (
 const DEFAULT_CONFIG = `
 [server]
 host = "0.0.0.0"
-port = 8080
+port = 7001
+
+[auth]
+secret = "IMG_HOSTING"
+expiredTime = 86400
 
 [middlewares]
 
@@ -32,8 +36,14 @@ port = 8080
 
 type Config struct {
 	Server      serverConfig
+	Auth        AuthConfig
 	Databases   map[string]databaseConfig
 	Middlewares map[string]middlewareConfig
+}
+
+type AuthConfig struct {
+	Secret      string
+	ExpiredTime int
 }
 
 type serverConfig struct {

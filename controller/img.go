@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo"
 	"github.com/pwcong/img-hosting/service"
 )
@@ -25,14 +23,10 @@ func (ctx *ImgController) Upload(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, BaseJSONResponse{
-		Code:    http.StatusOK,
-		Message: "",
-		Payload: struct {
-			URL string `json:"url"`
-		}{
-			URL: url,
-		},
+	return BaseResponse(c, STATUS_OK, "upload successfully", struct {
+		URL string `json:"url"`
+	}{
+		URL: url,
 	})
 
 }
