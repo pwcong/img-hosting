@@ -11,6 +11,7 @@
                 <router-view></router-view>
             </transition>
         </div>
+        <simple-footer/>
     </div>
 </template>
 
@@ -70,6 +71,7 @@ body {
 
 <script>
 import NavHeader from '@/components/NavHeader';
+import SimpleFooter from '@/components/SimpleFooter';
 
 import logo from '@/assets/imgs/logo.png';
 
@@ -102,7 +104,8 @@ export default {
     };
   },
   components: {
-    NavHeader
+    NavHeader,
+    SimpleFooter
   }
 };
 </script>
