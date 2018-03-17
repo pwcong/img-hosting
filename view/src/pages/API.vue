@@ -4,6 +4,8 @@
 </template>
 <style lang="scss">
 .api {
+  width: 100%;
+  box-sizing: border-box;
   padding: 32px;
 }
 </style>
@@ -119,8 +121,6 @@ curl -X POST \
 }
 \`\`\`
 
----
-
 #### 用户登录
 
 路径：\`/user/login\`
@@ -158,8 +158,6 @@ curl -X POST \
   }
 }
 \`\`\`
-
----
 
 #### 验证令牌
 
@@ -240,9 +238,7 @@ curl -X POST $API_BASE/img/upload \
 }
 \`\`\`
 
----
-
-### 删除图片
+#### 删除图片
 
 路径：\`/img/remove\`
 

@@ -4,6 +4,8 @@
 </template>
 <style lang="scss">
 .contact {
+  width: 100%;
+  box-sizing: border-box;
   padding: 32px;
 }
 </style>

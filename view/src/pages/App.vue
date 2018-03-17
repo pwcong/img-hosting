@@ -260,6 +260,7 @@ body {
 </style>
 
 <script>
+import Cookies from 'js-cookie';
 import NavHeader from '@/components/NavHeader';
 import SimpleFooter from '@/components/SimpleFooter';
 
@@ -287,7 +288,7 @@ export default {
         },
         {
           to: '/list',
-          label: '个人'
+          label: '个人图库'
         },
         {
           to: '/about',
@@ -338,7 +339,8 @@ export default {
 
         ctx.$message({
           type: 'warning',
-          message: '用户名和密码不能为空'
+          message: '用户名和密码不能为空',
+          duration: 1500
         });
         return;
       } else {
@@ -362,7 +364,8 @@ export default {
 
           ctx.$message({
             type: 'success',
-            message: '登陆成功'
+            message: '登陆成功',
+            duration: 1500
           });
         })
         .catch(err => {
@@ -386,7 +389,8 @@ export default {
 
         ctx.$message({
           type: 'warning',
-          message: '请填写所有内容'
+          message: '请填写所有内容',
+          duration: 1500
         });
         return;
       } else {
@@ -410,7 +414,8 @@ export default {
 
           ctx.$message({
             type: 'success',
-            message: '注册成功'
+            message: '注册成功',
+            duration: 1500
           });
         })
         .catch(err => {
@@ -464,10 +469,12 @@ export default {
   mounted() {
     const ctx = this;
 
-    ctx.$store
-      .dispatch(USER_ACTION_CHECK)
-      .then(res => {})
-      .catch(err => {});
+    if (Cookies.get('token')) {
+      ctx.$store
+        .dispatch(USER_ACTION_CHECK)
+        .then(res => {})
+        .catch(err => {});
+    }
   }
 };
 </script>

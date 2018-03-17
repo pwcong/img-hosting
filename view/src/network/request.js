@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { Message } from 'element-ui';
+
 import Cookies from 'js-cookie';
 
 const HEADERS = {};
@@ -28,6 +30,11 @@ export default function(url, method, data, headers, options) {
         if (res.status === 200 && res.data && res.data.code === 20000) {
           resolve(res.data);
         } else {
+          Message({
+            message: res.data ? res.data.message : '请求失败',
+            duration: 1500,
+            type: 'error'
+          });
           reject(res);
         }
       })
