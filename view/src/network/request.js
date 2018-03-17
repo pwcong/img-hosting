@@ -25,9 +25,8 @@ export default function(url, method, data, headers, options) {
       )
     )
       .then(res => {
-        console.log(res);
-        if (res.status === 200) {
-          resolve(res);
+        if (res.status === 200 && res.data && res.data.code === 20000) {
+          resolve(res.data);
         } else {
           reject(res);
         }

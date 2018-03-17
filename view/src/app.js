@@ -1,5 +1,10 @@
 import Vue from 'vue';
 
+import { Message } from 'element-ui';
+
+Vue.use(Message.name, Message);
+Vue.prototype.$message = Message;
+
 import 'normalize.css';
 import './assets/css/github-markdown.css';
 

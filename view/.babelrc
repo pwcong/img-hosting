@@ -1,6 +1,12 @@
 {
-    "presets": [
-        "env",
-        "stage-1"
+  "presets": ["env", "stage-1"],
+  "plugins": [
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
     ]
+  ]
 }

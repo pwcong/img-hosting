@@ -2,7 +2,7 @@ import request from '../request';
 
 import { BASE_API } from '@/const/config';
 
-function login(username, password) {
+export function login(username, password) {
   return request(
     `${BASE_API}/user/login`,
     'POST',
@@ -14,7 +14,7 @@ function login(username, password) {
   );
 }
 
-function register(username, password) {
+export function register(username, password) {
   return request(
     `${BASE_API}/user/register`,
     'POST',
@@ -26,6 +26,6 @@ function register(username, password) {
   );
 }
 
-function check() {
+export function check() {
   return request(`${BASE_API}/user/check`, 'POST', {}, {});
 }

@@ -41,6 +41,10 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
+        test: /\.(woff|eot|ttf)\??.*$/,
+        use: ['url-loader']
+      },
+      {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
@@ -66,7 +70,7 @@ module.exports = {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      title: 'Vue Family',
+      title: 'IMG HOSTING - 简单而实用的图库系统',
       template: 'index.ejs',
       minify: {
         collapseWhitespace: true
