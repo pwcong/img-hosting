@@ -1,0 +1,13 @@
+{
+  "name": "order-system-doc-api",
+  "version": "1.0.0",
+  "description": "API Document for Order System.",
+  "scripts": {
+    "start": "docsify serve ./"
+  },
+  "author": "Pwcong <pwcong@foxmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "docsify-cli": "^4.2.0"
+  }
+}

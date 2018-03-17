@@ -1,181 +1,108 @@
 <template>
     <div class="container">
-        <my-header 
-            :menu-list="menuList" 
-            :brand="brand"
-            :uid="uid"
-            :logined="logined"
-            :onSignInClickListener="handleShowLoginOrRegisterBox"
-            :onSignOutClickListener="handleSignOut"
-            />
-        <router-view-container/>
-        <my-footer :text="footerText"/>
-        <transition name="fade">
-
-            <login-or-register-box 
-                :logining="logining"
-                :registering="registering"
-                :onRegisterClick="handleRegister"
-                :onLoginClick="handleLogin"
-                :onCancleLoginOrRegisterClick="handleHideLoginOrRegisterBox"
-                v-if="loginOrRegisterBoxActive"
-                />
-        </transition>
-        <tips 
-            :showTips="showTips"
-            :tipsContent="tipsContent"
-            :tipsType="tipsType"/>
+        <nav-header :navs="navs">
+            <a class="logo" href="/" slot="logo">
+                <img :src="logo"/>
+                <span>IMG HOSTING</span>
+            </a>
+        </nav-header>
+        <div class="content">
+            <transition name="fade">
+                <router-view></router-view>
+            </transition>
+        </div>
     </div>
 </template>
-<style>
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
 
+<style lang="scss">
+html,
+body {
   width: 100%;
   height: 100%;
-
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Microsoft YaHei', sans-serif;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s;
+  position: absolute;
+  transition: opacity 0.5s;
 }
-
 .fade-enter,
-.fade-leave-active {
+.fade-leave-to {
+  position: absolute;
   opacity: 0;
 }
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .logo {
+    display: inline-block;
+    text-decoration: none;
+    color: #20b2aa;
+    font-size: 20px;
+    margin: 0 16px;
+    img {
+      line-height: 50px;
+      vertical-align: middle;
+      width: 28px;
+      height: 28px;
+    }
+    span {
+      line-height: 50px;
+      vertical-align: middle;
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding-top: 50px;
+    box-sizing: border-box;
+  }
+}
 </style>
+
 <script>
-import * as types from '../store/types';
+import NavHeader from '@/components/NavHeader';
 
-import MyHeader from '../components/MyHeader';
-import MyFooter from '../components/MyFooter';
-
-import RouterViewContainer from '../components/RouterViewContainer';
-import LoginOrRegisterBox from '../components/LoginOrRegisterBox';
-import Tips from '../components/Tips';
+import logo from '@/assets/imgs/logo.png';
 
 export default {
   data() {
     return {
-      brand: 'IMG HOSTING',
-      footerText: 'Copyleft © 2017  Pwcong',
-      loginOrRegisterBoxActive: false
+      logo,
+      navs: [
+        {
+          to: '/',
+          label: '首页'
+        },
+        {
+          to: '/list',
+          label: '个人'
+        },
+        {
+          to: '/about',
+          label: '关于'
+        },
+        {
+          to: '/contact',
+          label: '联系'
+        },
+        {
+          to: '/api',
+          label: 'API'
+        }
+      ]
     };
   },
-  computed: {
-    menuList() {
-      return [
-        { path: '/', text: '主页', active: true },
-        { path: '/own', text: '个人图库', active: this.$store.state.user.logined },
-        { path: '/about', text: '关于', active: true },
-        { path: '/contact', text: '联系', active: true },
-        { path: '/api', text: 'API', active: true }
-      ];
-    },
-    uid() {
-      return this.$store.state.user.uid;
-    },
-    logined() {
-      return this.$store.state.user.logined;
-    },
-    logining() {
-      return this.$store.state.user.logining;
-    },
-    registering() {
-      return this.$store.state.user.registering;
-    },
-    showTips() {
-      return this.$store.state.tip.show;
-    },
-    tipsContent() {
-      return this.$store.state.tip.content;
-    },
-    tipsType() {
-      return this.$store.state.tip.type;
-    }
-  },
-  methods: {
-    handleShowLoginOrRegisterBox(e) {
-      this.$data.loginOrRegisterBoxActive = true;
-    },
-    handleSignOut(e) {
-      this.$router.push('/');
-      this.$store.dispatch(types.ACTION_USER_TOLOGOUT);
-
-      this.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
-        type: 0,
-        content: '已成功登出'
-      });
-    },
-    handleHideLoginOrRegisterBox(e) {
-      this.$data.loginOrRegisterBoxActive = false;
-    },
-    handleLogin(uid, pwd) {
-      let ctx = this;
-
-      if (uid != '' && pwd != '') {
-        ctx.$store
-          .dispatch(types.ACTION_USER_TOLOGIN, {
-            uid,
-            pwd
-          })
-          .then(() => {
-            ctx.$data.loginOrRegisterBoxActive = false;
-
-            ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
-              type: 1,
-              content: '已成功登陆'
-            });
-          })
-          .catch(() => {
-            ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
-              type: 2,
-              content: '登陆失败，密码错误或用户不存在'
-            });
-          });
-      }
-    },
-    handleRegister(uid, pwd) {
-      let ctx = this;
-
-      if (uid != '' && pwd != '') {
-        ctx.$store
-          .dispatch(types.ACTION_USER_TOREGISTER, {
-            uid,
-            pwd
-          })
-          .then(() => {
-            ctx.$data.loginOrRegisterBoxActive = false;
-
-            ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
-              type: 1,
-              content: '注册成功'
-            });
-          })
-          .catch(() => {
-            ctx.$store.commit(types.MUTATION_TIP_SHOWTIPS, {
-              type: 2,
-              content: '注册失败，用户已存在或服务器出了小差'
-            });
-          });
-      }
-    }
-  },
   components: {
-    MyHeader,
-    MyFooter,
-    RouterViewContainer,
-    LoginOrRegisterBox,
-    Tips
-  },
-  mounted: function() {
-    this.$store.dispatch(types.ACTION_USER_CHECK);
+    NavHeader
   }
 };
 </script>

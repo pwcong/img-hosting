@@ -19,14 +19,16 @@ type BaseController struct {
 }
 
 type BaseResponseJSON struct {
+	Success bool        `json:"success"`
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Payload interface{} `json:"payload"`
 }
 
-func BaseResponse(c echo.Context, code int, message string, payload interface{}) error {
+func BaseResponse(c echo.Context, success bool, code int, message string, payload interface{}) error {
 
 	return c.JSON(http.StatusOK, BaseResponseJSON{
+		Success: success,
 		Code:    code,
 		Message: message,
 		Payload: payload,

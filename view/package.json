@@ -35,7 +35,9 @@
   "dependencies": {
     "axios": "^0.17.0",
     "cross-env": "^5.1.0",
+    "js-cookie": "^2.2.0",
     "marked": "^0.3.17",
+    "normalize.css": "^8.0.0",
     "rimraf": "^2.6.2",
     "vue": "^2.5.3",
     "vue-router": "^3.0.1",

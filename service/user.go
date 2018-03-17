@@ -59,7 +59,7 @@ func (ctx *UserService) Login(username string, password string) (model.User, err
 	return user, nil
 }
 
-func (ctx *UserService) findByID(id uint) (model.User, error) {
+func (ctx *UserService) FindByID(id uint) (model.User, error) {
 	db := ctx.Base.DB
 
 	var user model.User

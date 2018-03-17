@@ -1,24 +1,27 @@
 <template>
-    <div class="markdown-body content" v-html="rawHtml">
+    <div class="contact markdown-body" v-html="rawHTML">
     </div>
 </template>
-<style>
-
+<style lang="scss">
+.contact {
+  padding: 32px;
+}
 </style>
 <script>
 import marked from 'marked';
 
-const text = `
-    # 联系我
-    有任何疑问或者问题，请通过以下方式联系我：
-    * 扣扣：2209594033
-    * 邮箱：pwcong@foxmail.com
-    `;
+const content = `
+### 联系我
+
+有任何疑问或者问题，请通过以下方式联系我：
+* QQ：2209594033
+* 邮箱：pwcong@foxmail.com
+`;
 
 export default {
   data() {
     return {
-      rawHtml: marked(text)
+      rawHTML: marked(content)
     };
   }
 };

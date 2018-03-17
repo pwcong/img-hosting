@@ -1,188 +1,288 @@
 <template>
-    <div class="markdown-body content" v-html="rawHtml">
+    <div class="api markdown-body" v-html="rawHTML">
     </div>
 </template>
-<style>
-
+<style lang="scss">
+.api {
+  padding: 32px;
+}
 </style>
 <script>
 import marked from 'marked';
 
-const text = `
-    # API 文档
+const content = `
 
-    ## 图片上传
+### API文档
 
-    * URL: http://${window.location.host}/img/upload
-    * Method: POST
+> API文档地址 -> [Doc For IMG HOSTING](/doc)
 
-    **请求参数**
+#### 分页支持
 
-    |参数名称	 |类型	|是否必须	 |描述	     	| 
-    |-----------|--------|-----------|----------------|
-    |img		|File	 |是 		|上传的图片		 |
-    |uid		|String  |否			|标记图片拥有者   |
+部分接口支持数据分页
 
-    **返回数据说明（JSON格式）**
+分页参数：
 
-    |名称		   |类型	 |描述					|
-    |-----------|-------|------------------------|
-    |code		|Number	|响应状态码               |
-    |msg		|String |响应信息				  |
-    |filename	|String |上传的图片文件名 		   |
-    |path		|String |图片文件保存路径		   |
-    |url 		|String |生成的图片URL地址  	    |
+* pageSize: 每页个数
+* pageNo: 页码
 
-    **响应示例**
+请求示例：
 
-    \`\`\`
-        {
-            "filename": "59432931_p0.jpg",
-            "path": "/2017/05/16/b45b2db6425f.jpg",
-            "url": "http://localhost/public/2017/05/16/b45b2db6425f.jpg",
-            "code": 200,
-            "msg": ""
-        }
+\`\`\`shell
+curl -X GET $API_BASE/imgs/?page_size=20&page_no=1 \
+  -H "Token: xxx"
+\`\`\`
 
-    \`\`\`
+相应结果：
 
-    ## 获取用户上传图片
+\`\`\`json
+{
+  "success": true,      // 是否处理成功
+  "message": "xxx",     // 错误信息
+  "code": 20000,        // 响应码
+  "payload": {          // 主要内容
+    "data": [],
+    "page_size": 5,
+    "page_no": 1,
+    "total_size": 1,
+    "total_no": 1
+  }
+}
 
-    * URL: http://${window.location.host}/img/list
-    * Method: POST
 
-    **请求参数**
+\`\`\`
 
-    |参数名称	 |类型	|是否必须	 |描述	     	     | 
-    |-----------|--------|-----------|---------------------|
-    |token		|String	 |是 		|用户令牌（需登录获取） |
+#### 统一请求返回内容（JSON）
 
-    **返回数据说明（JSON格式）**
+无论请求是否处理成功均返回内容，内容模板如下：
 
-    |名称		   |类型	 |描述					|
-    |-----------|-------|------------------------|
-    |code		|Number	|响应状态码               |
-    |msg		|String |响应信息				  |
-    |imgs	    |Array  |用户上传图片列表 		   |
+\`\`\`json
+{
+  "success": true,      // 是否处理成功
+  "message": "xxx",     // 错误信息
+  "code": 20000,        // 响应码
+  "payload": {          // 主要内容
+    ...
+  }
+}
+\`\`\`
 
-    **响应示例**
+#### 响应码
 
-    \`\`\`
-        {
-            "imgs": [
-                {
-                "filename": "59432931_p0.jpg",
-                "year": "2017",
-                "month": "05",
-                "day": "16",
-                "storename": "b45b2db6425f.jpg",
-                "path": "/2017/05/16/b45b2db6425f.jpg",
-                "url": "http://localhost/public/2017/05/16/b45b2db6425f.jpg"
-                }
-            ],
-            "code": 200,
-            "msg": ""
-        }
-    \`\`\`
+| 数值  | 含义      |
+| ----- | -------- |
+| 20000 | 请求成功  |
+| 40000 | 请求失败  |
 
-    ## 删除用户上传图片
+******
 
-    * URL: http://${window.location.host}/img/delete
-    * Method: POST
+### 用户接口
 
-    **请求参数**
+* 用户注册
+* 用户登录
+* 验证令牌
 
-    |参数名称	 |类型	|是否必须	 |描述	     	    | 
-    |-----------|--------|-----------|--------------------|
-    |token		|String	 |是 		|用户令牌（需登录获取）|
-    |year		|String	 |是 		|年                  |
-    |month		|String	 |是 		|月                  |
-    |day		|String	 |是 		|日                  |
-    |storename	|String	 |是 		|服务端图片文件名     |
+#### 用户注册
 
-    **返回数据说明（JSON格式）**
+路径：\`/user/register\`
 
-    |名称		   |类型	 |描述					|
-    |-----------|-------|------------------------|
-    |code		|Number	|响应状态码               |
-    |msg		|String |响应信息				  |
+方法: \`POST\`
 
-    **响应示例**
+请求参数:
 
-    \`\`\`
-        {
-            "code": 200,
-            "msg": ""
-        }
-    \`\`\`
+* username: 用户名
+* password: 密码
 
-    ## 用户登录
+请求示例：
 
-    * URL: http://${window.location.host}/user/login
-    * Method: POST
+\`\`\`shell
+curl -X POST \
+  $API_BASE/user/register \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "xxx",
+    "password": "yyy"
+  }'
+\`\`\`
 
-    **请求参数**
+返回值：
 
-    |参数名称	 |类型	|是否必须	 |描述	 | 
-    |-----------|--------|-----------|---------|
-    |uid		|String	 |是 		|用户名    |
-    |pwd		|String	 |是 		|密码    |
+\`\`\`json
+{
+  "success": true,
+  "message": "注册成功",
+  "code": 20000,
+  "payload": {
+    "token": "xxx",
+    "id": 1,
+    "username": "xxx"
+  }
+}
+\`\`\`
 
-    **返回数据说明（JSON格式）**
+---
 
-    |名称        |类型   |描述	         |
-    |-----------|-------|-----------------|
-    |code		|Number	|响应状态码        |
-    |msg		|String |响应信息          |
-    |token	    |String |用户令牌 		   |
+#### 用户登录
 
-    **响应示例**
+路径：\`/user/login\`
 
-    \`\`\`
-        {
-            "token": "eyJhbGciOiJIUzI1NiIsInxpXVCJ9.eyJ1aWQiOiJwd2NvbmciLCJleHAiOjE1MDIxMjE4NjV9.dmcNHDncLnDt3ISGGRhcsJNGCcSlm6NijGn5efz_KwE",
-            "code": 200,
-            "message": ""
-        }
-    \`\`\`
+方法：\`POST\`
 
-    ## 用户注册
+请求参数：
 
-    * URL: http://${window.location.host}/user/register
-    * Method: POST
+* username: 用户名
+* password: 密码
 
-    **请求参数**
+请求示例：
 
-    |参数名称	 |类型	|是否必须	 |描述	 | 
-    |-----------|--------|-----------|---------|
-    |uid		|String	 |是 		|用户名    |
-    |pwd		|String	 |是 		|密码    |
+\`\`\`shell
+curl -X POST \
+  $API_BASE/user/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "xxx",
+    "password": "yyy"
+  }'
+\`\`\`
 
-    **返回数据说明（JSON格式）**
+返回值：
 
-    |名称		   |类型	 |描述		  |
-    |-----------|-------|--------------|
-    |code		|Number	|响应状态码     |
-    |msg		|String |响应信息       |
-    |token	    |String |用户令牌       |
+\`\`\`json
+{
+  "success": true,
+  "message": "登录成功",
+  "code": 20000,
+  "payload": {
+    "token": "xxx",
+    "id": 1,
+    "username": "xxx"
+  }
+}
+\`\`\`
 
-    **响应示例**
+---
 
-    \`\`\`
-        {
-            "token": "eyJhbGciOiJIUzI1NiIsInxpXVCJ9.eyJ1aWQiOiJwd2NvbmciLCJleHAiOjE1MDIxMjE4NjV9.dmcNHDncLnDt3ISGGRhcsJNGCcSlm6NijGn5efz_KwE",
-            "code": 200,
-            "message": ""
-        }
-    \`\`\`
+#### 验证令牌
 
-    
-    `;
+路径：\`/user/check\`
+
+方法：\`POST\`
+
+请求头：
+
+* Token: 用户令牌
+
+请求示例：
+
+\`\`\`shell
+curl -X POST \
+  $API_BASE/user/check \
+  -H 'Token: xxx'
+\`\`\`
+
+返回值：
+
+\`\`\`json
+{
+  "success": true,
+  "code": 20000,
+  "message": "验证成功",
+  "payload": {
+    "id": 10000,
+    "token": "xxx",
+    "username": "xxx"
+  }
+}
+\`\`\`
+
+******
+
+### 图片接口
+
+* 上传图片
+* 删除图片
+
+******
+
+#### 上传图片
+
+路径：\`/img/upload\`
+
+方法: \`POST\`
+
+请求参数:
+
+* img: 图片文件
+
+请求头：
+
+* Token: 用户令牌(可选)
+
+请求示例：
+
+\`\`\`shell
+curl -X POST $API_BASE/img/upload \
+  -H 'Token: xxx' \
+  -H 'content-type: multipart/form-data; boundary=xxx' \
+  -F 'img=@xxx'
+\`\`\`
+
+返回值：
+
+\`\`\`json
+{
+  "success": true,
+  "message": "上传成功",
+  "code": 20000,
+  "payload": {
+    "id": 1,
+    "url": "xxx"
+  }
+}
+\`\`\`
+
+---
+
+### 删除图片
+
+路径：\`/img/remove\`
+
+方法: \`POST\`
+
+请求参数:
+
+* ids: 图片ID数组
+
+请求头：
+
+* Token: 用户令牌
+
+请求示例：
+
+\`\`\`shell
+curl -X POST $API_BASE/img/remove \
+  -H 'Token: xxx' \
+  -d '{
+    ids: []
+  }'
+\`\`\`
+
+返回值：
+
+\`\`\`json
+{
+  "success": true,
+  "message": "删除成功",
+  "code": 20000,
+  "payload": {}
+}
+\`\`\`
+
+`;
 
 export default {
   data() {
     return {
-      rawHtml: marked(text)
+      rawHTML: marked(content)
     };
   }
 };

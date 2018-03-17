@@ -1,18 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import img from './modules/img';
-import user from './modules/user';
-import tip from './modules/tip';
+import sampleModule from './modules/sample';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-  modules: {
-    img,
-    user,
-    tip
-  }
+
+    modules: {
+
+        sample: sampleModule
+
+    }
+
 });
 
 export default store;

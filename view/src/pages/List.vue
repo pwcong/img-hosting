@@ -1,5 +1,5 @@
 <template>
-    <div class="home">
+    <div class="list">
     </div>
 </template>
 <style lang="scss">

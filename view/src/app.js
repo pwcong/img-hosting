@@ -1,13 +1,16 @@
 import Vue from 'vue';
 
+import 'normalize.css';
+import './assets/css/github-markdown.css';
+
+import store from './store';
+import router from './routes';
+
 import App from './pages/App';
 
-import router from './routes';
-import store from './store';
-
 new Vue({
-    el: '#app',
-    router,
-    store,
-    render: h => h(App)
+  el: '#app',
+  store,
+  router,
+  render: h => h(App)
 });

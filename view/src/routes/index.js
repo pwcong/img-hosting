@@ -1,22 +1,18 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-Vue.use(VueRouter);
-
 import Home from '../pages/Home';
-import About from '../pages/About';
 import Contact from '../pages/Contact';
 import API from '../pages/API';
-import Own from '../pages/Own';
+import About from '../pages/About';
+import List from '../pages/List';
+
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
     component: Home
-  },
-  {
-    path: '/about',
-    component: About
   },
   {
     path: '/contact',
@@ -27,8 +23,12 @@ const routes = [
     component: API
   },
   {
-    path: '/own',
-    component: Own
+    path: '/list',
+    component: List
+  },
+  {
+    path: '/about',
+    component: About
   }
 ];
 

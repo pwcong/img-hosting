@@ -13,6 +13,7 @@ func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 
 	e.Static("/", "view/dist")
 	e.Static("/public", "public")
+	e.Static("/doc", "doc")
 
 	authMiddleware := middleware.AuthMiddleware{Conf: conf}
 
@@ -24,11 +25,12 @@ func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {
 	userController := &controller.UserController{Base: baseController}
 
 	e.GET("/", indexController.Default)
-	e.POST("/img/upload", imgController.Upload)
-	e.POST("/img/upload/private", imgController.PrivateUpload, authMiddleware.AuthToken)
+	e.POST("/img/upload", imgController.Upload, authMiddleware.OptionalAuthToken)
+	e.POST("/img/remove", imgController.RemovePrivateImages, authMiddleware.AuthToken)
 	e.GET("/imgs", imgController.GetPrivateImages, authMiddleware.AuthToken)
 
 	e.POST("/user/login", userController.Login)
 	e.POST("/user/register", userController.Register)
+	e.POST("/user/check", userController.CheckToken, authMiddleware.AuthToken)
 
 }

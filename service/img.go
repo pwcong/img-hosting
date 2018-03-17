@@ -88,7 +88,7 @@ func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) 
 	return img, nil
 }
 
-func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id int) (model.Img, error) {
+func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id uint) (model.Img, error) {
 
 	db := ctx.Base.DB
 
@@ -111,7 +111,7 @@ func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id int) (mod
 
 }
 
-func (ctx *ImgService) GetPrivateImages(id int) ([]model.Img, error) {
+func (ctx *ImgService) GetPrivateImages(id uint) ([]model.Img, error) {
 
 	db := ctx.Base.DB
 
@@ -124,6 +124,27 @@ func (ctx *ImgService) GetPrivateImages(id int) ([]model.Img, error) {
 
 	var imgs []model.Img
 	db.Model(&user).Related(&imgs, "Imgs")
+
+	return imgs, nil
+
+}
+
+func (ctx *ImgService) RemovePrivateImages(userId uint, imgIds []uint) ([]model.Img, error) {
+
+	db := ctx.Base.DB
+
+	var user model.User
+
+	notFound := db.Where("id = ?", userId).First(&user).RecordNotFound()
+	if notFound {
+		return []model.Img{}, errors.New("user is not existed")
+	}
+
+	var imgs []model.Img
+
+	db.Where("id in (?)", imgIds).Find(&imgs)
+
+	db.Model(&user).Association("Imgs").Delete(imgs)
 
 	return imgs, nil
 
