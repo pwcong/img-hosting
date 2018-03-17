@@ -7,8 +7,8 @@
             </a>
             <div class="toolbar" slot="toolbar">
               <span v-if="check">Hi~ {{username}}</span>
-              <span v-if="!check" @click="switchToLogin">登录</span>
-              <span v-if="check">登出</span>
+              <span class="btn" v-if="!check" @click="switchToLogin">登录</span>
+              <span class="btn" v-if="check" @click="handleToLogout">登出</span>
             </div>
         </nav-header>
         <div class="content">
@@ -39,7 +39,7 @@
                 <span class="icon icon-password" :style="{
                   'background-image': 'url(' + passwordIcon + ')'
                 }"></span>
-                <input v-model="form.password" placeholder="请输入密码"/>
+                <input v-model="form.password" type="password" placeholder="请输入密码"/>
               </div>
 
               <div v-if="dialogSwitch" :class="{
@@ -47,7 +47,7 @@
                   'form-item-input': true,
                   'warn': !formValid.password2
                 }">
-                <input v-model="form.password2" placeholder="请再次输入密码"/>
+                <input v-model="form.password2" type="password" placeholder="请再次输入密码"/>
               </div>
               <div v-if="!dialogSwitch" class="form-item form-item-tip">
                 没有账户?<span @click="switchToRegister">注册</span>一个吧
@@ -118,7 +118,7 @@ body {
     padding-top: 10px;
     margin-right: 16px;
 
-    span {
+    span.btn {
       margin-left: 8px;
       display: inline-block;
       height: 26px;
@@ -263,7 +263,12 @@ body {
 import NavHeader from '@/components/NavHeader';
 import SimpleFooter from '@/components/SimpleFooter';
 
-import { USER_ACTION_LOGIN } from '@/store/types';
+import {
+  USER_ACTION_LOGIN,
+  USER_ACTION_CHECK,
+  USER_ACTION_REGISTER,
+  USER_ACTION_LOGOUT
+} from '@/store/types';
 
 import logo from '@/assets/imgs/logo.png';
 import usernameIcon from '@/assets/icons/username.png';
@@ -323,8 +328,6 @@ export default {
         return;
       }
 
-      ctx.logining = true;
-
       const { username, password } = ctx.form;
       if (!username || !password) {
         ctx.formValid = {
@@ -338,7 +341,15 @@ export default {
           message: '用户名和密码不能为空'
         });
         return;
+      } else {
+        ctx.formValid = {
+          username: true,
+          password: true,
+          password2: true
+        };
       }
+
+      ctx.logining = true;
 
       ctx.$store
         .dispatch(USER_ACTION_LOGIN, {
@@ -347,23 +358,89 @@ export default {
         })
         .then(res => {
           ctx.logining = false;
+          ctx.dialogVisible = false;
+
+          ctx.$message({
+            type: 'success',
+            message: '登陆成功'
+          });
         })
         .catch(err => {
           ctx.logining = false;
         });
     },
-    handleToRegister() {},
+    handleToRegister() {
+      const ctx = this;
+
+      if (ctx.registering) {
+        return;
+      }
+
+      const { username, password, password2 } = ctx.form;
+      if (!username || !password || !password2 || password !== password2) {
+        ctx.formValid = {
+          username: !!username,
+          password: !!password,
+          password2: password === password2
+        };
+
+        ctx.$message({
+          type: 'warning',
+          message: '请填写所有内容'
+        });
+        return;
+      } else {
+        ctx.formValid = {
+          username: true,
+          password: true,
+          password2: true
+        };
+      }
+
+      ctx.registering = true;
+
+      ctx.$store
+        .dispatch(USER_ACTION_REGISTER, {
+          username,
+          password
+        })
+        .then(res => {
+          ctx.registering = false;
+          ctx.dialogVisible = false;
+
+          ctx.$message({
+            type: 'success',
+            message: '注册成功'
+          });
+        })
+        .catch(err => {
+          ctx.registering = false;
+        });
+    },
+    handleToLogout() {
+      this.$store.dispatch(USER_ACTION_LOGOUT);
+    },
     switchToLogin() {
       this.form = {
         username: '',
         password: '',
         password2: ''
       };
+      this.formValid = {
+        username: true,
+        password: true,
+        password2: true
+      };
 
       this.dialogVisible = true;
       this.dialogSwitch = false;
     },
     switchToRegister() {
+      this.formValid = {
+        username: true,
+        password: true,
+        password2: true
+      };
       this.form = {
         username: '',
         password: '',
@@ -384,6 +461,13 @@ export default {
     NavHeader,
     SimpleFooter
   },
-  mounted() {}
+  mounted() {
+    const ctx = this;
+
+    ctx.$store
+      .dispatch(USER_ACTION_CHECK)
+      .then(res => {})
+      .catch(err => {});
+  }
 };
 </script>
