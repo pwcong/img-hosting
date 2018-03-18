@@ -72,7 +72,7 @@
 
     .upload-box-wrap {
       border: 1px dashed #888;
-      height: 480px;
+      height: 400px;
       border-radius: 2px;
       overflow: auto;
 
