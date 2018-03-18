@@ -429,7 +429,8 @@ export default {
         .then(res => {
           ctx.$message({
             type: 'success',
-            message: '登出成功'
+            message: '登出成功',
+            duration: 1500
           });
         })
         .catch(err => {});

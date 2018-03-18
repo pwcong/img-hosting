@@ -160,6 +160,11 @@ export default {
   methods: {
     getList(currentPage) {
       const ctx = this;
+
+      if (!ctx.check) {
+        return;
+      }
+
       ctx.$store
         .dispatch(IMG_ACTION_GETLIST, {
           pageSize: ctx.pageSize,
@@ -188,7 +193,8 @@ export default {
             .then(res => {
               ctx.$message({
                 type: 'success',
-                message: '删除成功!'
+                message: '删除成功',
+                duration: 1500
               });
 
               ctx.getList(1);
@@ -198,7 +204,8 @@ export default {
         .catch(() => {
           ctx.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消删除',
+            duration: 1500
           });
         });
     },
