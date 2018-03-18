@@ -100,7 +100,7 @@
       .bottom {
         margin-top: 6px;
         font-size: 11px;
-        color: #aaa;
+        color: #888;
 
         .el-icon-delete {
           font-size: 16px;
