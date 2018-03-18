@@ -149,7 +149,7 @@ import { removeImage } from '@/network/api/img';
 
 import { USER_ACTION_CHECK, IMG_ACTION_GETLIST } from '@/store/types';
 
-import { BASE_API } from '@/const/config';
+import { BASE_API, IS_PROD } from '@/const/config';
 import pleaseImg from '@/assets/imgs/please.png';
 
 const PAGE_SIZE = 20;
@@ -221,10 +221,10 @@ export default {
       this.getList(currentPage);
     },
     handleViewImage(img) {
+      const url = IS_PROD ? window.location.host + img.url : img.url;
+
       this.$alert(
-        `<input value="${
-          img.url
-        }" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`,
+        `<input value="${url}" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`,
         '图片链接',
         {
           confirmButtonText: '确定',

@@ -222,6 +222,8 @@ import chance from 'chance';
 
 import clipboard from 'clipboard';
 
+import { IS_PROD } from '@/const/config';
+
 import { IMG_ACTION_UPLOAD, IMG_MUTATION_PUSH_IMG, IMG_MUTATION_POP_IMG } from '@/store/types';
 
 export default {
@@ -259,7 +261,7 @@ export default {
       ctx.$store.commit(IMG_MUTATION_POP_IMG, img);
     },
     handleViewImage(img) {
-      this.previewUrl = img.url;
+      this.previewUrl = IS_PROD ? window.location.host + img.url : img.url;
     },
     handleUploadImage(img) {
       this.$store
