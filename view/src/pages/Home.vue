@@ -29,11 +29,11 @@
                 <i v-if="!img.uploading && !img.uploaded" class="el-icon el-icon-upload" @click="handleUploadImage(img)"></i>
                 <i v-if="!img.uploading" class="el-icon el-icon-delete" @click="handleRemoveImage(img)"></i>
               </div>
-              <div class="progress" v-if="img.uploading">
-                <div class="progress-wrap" :style="{
-                  width: img.progress + '%'
-                }"></div>
-              </div>
+            </div>
+            <div class="progress">
+              <div class="progress-wrap" :style="{
+                width: img.progress + '%'
+              }"></div>
             </div>
           </el-card>
 
@@ -43,7 +43,7 @@
         <input id="urlResult" class="upload-toolbar-input" type="text" v-model="previewUrl">
 
         <button id="copyBtn" data-clipboard-target="#urlResult" class="upload-toolbar-btn btn-copy" type="button" @click="handleCopyResultUrl">复制</button>
-        <button class="upload-toolbar-btn btn-upload" type="button" @click="handleUploadAllImages">上传</button>
+        <button v-if="canUploadAll" class="upload-toolbar-btn btn-upload" type="button" @click="handleUploadAllImages">上传</button>
 
         <label class="upload-toolbar-btn btn-browser">
           <input type="file" multiple="multipe" accept="image/*" @change="handleSelectImages"/>
@@ -137,7 +137,6 @@
 
         .progress {
           position: relative;
-          margin-top: 8px;
           .progress-wrap {
             width: 0;
             height: 2px;
@@ -307,6 +306,17 @@ export default {
   computed: {
     uploadList() {
       return this.$store.getters.uploadList;
+    },
+    canUploadAll() {
+      const uploadList = this.$store.getters.uploadList || [];
+      const l = uploadList.length;
+      for (let i = 0; i < l; i++) {
+        if (!uploadList[i].uploaded && !uploadList[i].uploading) {
+          return true;
+        }
+      }
+
+      return false;
     }
   },
   mounted() {
