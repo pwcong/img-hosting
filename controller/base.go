@@ -53,6 +53,12 @@ func Pager(c echo.Context, data []interface{}) interface{} {
 
 	l := len(data)
 
+	if l <= 0 {
+		return Page{
+			Data: data,
+		}
+	}
+
 	var pageSize int
 	var pageNo int
 
@@ -63,7 +69,7 @@ func Pager(c echo.Context, data []interface{}) interface{} {
 			Data:      data,
 			PageSize:  l,
 			PageNo:    1,
-			TotalSize: 1,
+			TotalSize: l,
 			TotalNo:   1,
 		}
 	}

@@ -11,6 +11,7 @@ import (
 type ImgItem struct {
 	ID        uint      `json:"id"`
 	URL       string    `json:"url"`
+	Filename  string    `json:"filename"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -99,6 +100,7 @@ func (ctx *ImgController) GetPrivateImages(c echo.Context) error {
 	for _, img := range imgs {
 		_imgs = append(_imgs, ImgItem{
 			ID:        img.ID,
+			Filename:  img.Filename,
 			URL:       "/public/" + img.Year + "/" + img.Month + "/" + img.Date + "/" + img.Symbol + "." + img.ExtName,
 			CreatedAt: img.CreatedAt,
 		})

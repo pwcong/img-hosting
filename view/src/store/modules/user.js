@@ -100,12 +100,16 @@ const store = {
       });
     },
     [USER_ACTION_LOGOUT]: ({ dispatch, commit, state }) => {
-      commit(USER_MUTATION_SET_CHECK, false);
-      commit(USER_MUTATION_SET_ID, null);
-      commit(USER_MUTATION_SET_TOKEN, null);
-      commit(USER_MUTATION_SET_USERNAME, null);
+      return new Promise((resolve, reject) => {
+        commit(USER_MUTATION_SET_CHECK, false);
+        commit(USER_MUTATION_SET_ID, null);
+        commit(USER_MUTATION_SET_TOKEN, null);
+        commit(USER_MUTATION_SET_USERNAME, null);
 
-      Cookies.remove('token');
+        Cookies.remove('token');
+
+        resolve();
+      });
     }
   }
 };

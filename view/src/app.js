@@ -1,9 +1,17 @@
 import Vue from 'vue';
 
-import { Message } from 'element-ui';
+import { Message, MessageBox, Icon, Pagination, Card, Dialog } from 'element-ui';
 
-Vue.use(Message.name, Message);
+Vue.use(Icon);
+Vue.use(Pagination);
+Vue.use(Card);
+Vue.use(Dialog);
+
 Vue.prototype.$message = Message;
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
+Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$prompt = MessageBox.prompt;
 
 import 'normalize.css';
 import './assets/css/github-markdown.css';

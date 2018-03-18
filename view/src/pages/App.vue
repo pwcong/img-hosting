@@ -423,7 +423,16 @@ export default {
         });
     },
     handleToLogout() {
-      this.$store.dispatch(USER_ACTION_LOGOUT);
+      const ctx = this;
+      ctx.$store
+        .dispatch(USER_ACTION_LOGOUT)
+        .then(res => {
+          ctx.$message({
+            type: 'success',
+            message: '登出成功'
+          });
+        })
+        .catch(err => {});
     },
     switchToLogin() {
       this.form = {
