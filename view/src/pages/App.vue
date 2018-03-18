@@ -476,7 +476,7 @@ export default {
     NavHeader,
     SimpleFooter
   },
-  mounted() {
+  beforeCreate() {
     const ctx = this;
 
     if (Cookies.get('token')) {

@@ -27,7 +27,8 @@
           <span class="label">{{img.filename}}</span>
           <div class="bottom">
             <span>{{img.created_at}}</span>
-            <i class="el-icon-delete" @click="handleRemoveImage(img)"></i>
+            <i class="el-icon el-icon-info" @click="handleViewImage(img)"></i>
+            <i class="el-icon el-icon-delete" @click="handleRemoveImage(img)"></i>
           </div>
         </div>
       </el-card>
@@ -98,17 +99,23 @@
       }
 
       .bottom {
-        margin-top: 6px;
+        margin-top: 16px;
         font-size: 11px;
         color: #888;
 
-        .el-icon-delete {
-          font-size: 16px;
+        .el-icon {
+          margin-left: 8px;
+          position: relative;
+          top: -2px;
+          font-size: 18px;
           float: right;
           cursor: pointer;
 
-          &:hover {
+          &.el-icon-delete:hover {
             color: red;
+          }
+          &.el-icon-info:hover {
+            color: #20b2aa;
           }
         }
       }
@@ -135,11 +142,12 @@
 }
 </style>
 <script>
+import Cookies from 'js-cookie';
 import moment from 'moment';
 
 import { removeImage } from '@/network/api/img';
 
-import { IMG_ACTION_GETLIST } from '@/store/types';
+import { USER_ACTION_CHECK, IMG_ACTION_GETLIST } from '@/store/types';
 
 import { BASE_API } from '@/const/config';
 import pleaseImg from '@/assets/imgs/please.png';
@@ -211,6 +219,12 @@ export default {
     },
     handleCurrentPageChange(currentPage) {
       this.getList(currentPage);
+    },
+    handleViewImage(img) {
+      this.$alert(`<input value="${img.url}" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`, '图片链接', {
+        confirmButtonText: '确定',
+        dangerouslyUseHTMLString: true
+      });
     }
   },
   computed: {
@@ -227,7 +241,15 @@ export default {
   },
   mounted() {
     const ctx = this;
-    ctx.getList(1);
+
+    if (Cookies.get('token')) {
+      ctx.$store
+        .dispatch(USER_ACTION_CHECK)
+        .then(res => {
+          ctx.getList(1);
+        })
+        .catch(err => {});
+    }
   }
 };
 </script>
