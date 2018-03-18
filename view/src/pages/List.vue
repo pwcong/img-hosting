@@ -221,10 +221,18 @@ export default {
       this.getList(currentPage);
     },
     handleViewImage(img) {
-      this.$alert(`<input value="${img.url}" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`, '图片链接', {
-        confirmButtonText: '确定',
-        dangerouslyUseHTMLString: true
-      });
+      this.$alert(
+        `<input value="${
+          img.url
+        }" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`,
+        '图片链接',
+        {
+          confirmButtonText: '确定',
+          dangerouslyUseHTMLString: true
+        }
+      )
+        .then(() => {})
+        .catch(() => {});
     }
   },
   computed: {
