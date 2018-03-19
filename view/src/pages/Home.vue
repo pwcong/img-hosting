@@ -261,7 +261,7 @@ export default {
       ctx.$store.commit(IMG_MUTATION_POP_IMG, img);
     },
     handleViewImage(img) {
-      this.previewUrl = IS_PROD ? window.location.host + img.url : img.url;
+      this.previewUrl = IS_PROD ? window.location.origin + img.url : img.url;
     },
     handleUploadImage(img) {
       this.$store

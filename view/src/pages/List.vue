@@ -221,7 +221,7 @@ export default {
       this.getList(currentPage);
     },
     handleViewImage(img) {
-      const url = IS_PROD ? window.location.host + img.url : img.url;
+      const url = IS_PROD ? window.location.origin + img.url : img.url;
 
       this.$alert(
         `<input value="${url}" style="width: 100%; border: none; border-bottom: 1px solid #ccc; height: 24px; outline: none;"/>`,
