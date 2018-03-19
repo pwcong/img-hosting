@@ -62,7 +62,7 @@
 .home {
   width: 100%;
   box-sizing: border-box;
-  padding: 32px;
+  padding: 32px 32px 48px 32px;
 
   .upload-box {
     border: 1px solid #ccc;
