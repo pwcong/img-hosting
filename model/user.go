@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username     string `gorm:"type:varchar(255);unique_index;not null"`
-	Password     string `gorm:"type:varchar(255);not null"`
-	PasswordSalt string `gorm:"type:varchar(255);not null"`
-	Imgs         []*Img `gorm:"many2many:user_imgs;association_foreignkey:id;foreignkey:id"`
+	Username     string `gorm:"type:varchar(255);unique_index;not null;"`
+	Password     string `gorm:"type:varchar(255);not null;"`
+	PasswordSalt string `gorm:"type:varchar(255);not null;"`
+	Imgs         []*Img `gorm:"many2many:user_imgs;"`
 }

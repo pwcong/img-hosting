@@ -31,7 +31,7 @@ func (ctx *ImgController) Upload(c echo.Context) error {
 
 	file, err := c.FormFile("img")
 	if file == nil || err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	var img model.Img
@@ -45,7 +45,7 @@ func (ctx *ImgController) Upload(c echo.Context) error {
 	}
 
 	if err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	return BaseResponse(c, true, STATUS_OK, "upload successfully", struct {
@@ -66,12 +66,12 @@ func (ctx *ImgController) PrivateUpload(c echo.Context) error {
 
 	file, err := c.FormFile("img")
 	if file == nil || err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	img, err := service.SavePrivateImage(file, uint(c.Get("id").(float64)))
 	if err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	return BaseResponse(c, true, STATUS_OK, "upload successfully", struct {
@@ -92,7 +92,7 @@ func (ctx *ImgController) GetPrivateImages(c echo.Context) error {
 
 	imgs, err := service.GetPrivateImages(uint(c.Get("id").(float64)))
 	if err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	var _imgs []interface{}
@@ -126,7 +126,7 @@ func (ctx *ImgController) RemovePrivateImages(c echo.Context) error {
 
 	_, err := service.RemovePrivateImages(uint(c.Get("id").(float64)), imgForm.IDs)
 	if err != nil {
-		return BaseResponse(c, false, STATUS_OK, err.Error(), struct{}{})
+		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
 	}
 
 	return BaseResponse(c, true, STATUS_OK, "delete successfully", struct{}{})
