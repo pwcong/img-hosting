@@ -71,7 +71,12 @@ func Initialize() (Config, error) {
 
 	var conf Config
 
-	_, err := toml.DecodeFile(filepath.Join(filepath.Dir(os.Args[0]), "config/default.toml"), &conf)
+	root, err := os.Getwd()
+	if err != nil {
+		root = filepath.Dir(os.Args[0])
+	}
+
+	_, err := toml.DecodeFile(filepath.Join(root, "config/default.toml"), &conf)
 
 	if err == nil {
 
