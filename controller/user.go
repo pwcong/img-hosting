@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -26,16 +27,16 @@ func (ctx *UserController) Login(c echo.Context) error {
 
 	uf := new(UserForm)
 	if err := c.Bind(uf); err != nil {
-		return BaseResponse(c, false, STATUS_ERROR, "invalid params", struct{}{})
+		return errors.New("invalid params")
 	}
 
 	if uf.Username == "" || uf.Password == "" {
-		return BaseResponse(c, false, STATUS_ERROR, "params not enough", struct{}{})
+		return errors.New("params not enough")
 	}
 
 	user, err := service.Login(uf.Username, uf.Password)
 	if err != nil {
-		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
+		return err
 	}
 
 	now := time.Now()
@@ -48,7 +49,7 @@ func (ctx *UserController) Login(c echo.Context) error {
 
 	t, err := token.SignedString([]byte(ctx.Base.Conf.Auth.Secret))
 	if err != nil {
-		BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
+		return err
 	}
 
 	cookie := new(http.Cookie)
@@ -79,16 +80,16 @@ func (ctx *UserController) Register(c echo.Context) error {
 
 	uf := new(UserForm)
 	if err := c.Bind(uf); err != nil {
-		return BaseResponse(c, false, STATUS_ERROR, "invalid params", struct{}{})
+		return errors.New("invalid params")
 	}
 
 	if uf.Username == "" || uf.Password == "" {
-		return BaseResponse(c, false, STATUS_ERROR, "params not enough", struct{}{})
+		return errors.New("params not enough")
 	}
 
 	user, err := service.Register(uf.Username, uf.Password)
 	if err != nil {
-		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
+		return err
 	}
 
 	now := time.Now()
@@ -101,7 +102,7 @@ func (ctx *UserController) Register(c echo.Context) error {
 
 	t, err := token.SignedString([]byte(ctx.Base.Conf.Auth.Secret))
 	if err != nil {
-		BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
+		return err
 	}
 
 	cookie := new(http.Cookie)
@@ -134,7 +135,7 @@ func (ctx *UserController) CheckToken(c echo.Context) error {
 	user, err := service.FindByID(id)
 
 	if err != nil {
-		return BaseResponse(c, false, STATUS_ERROR, err.Error(), struct{}{})
+		return err
 	}
 
 	return BaseResponse(c, true, STATUS_OK, "check successfully", struct {

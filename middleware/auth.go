@@ -1,12 +1,12 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/pwcong/img-hosting/config"
-	. "github.com/pwcong/img-hosting/controller"
 )
 
 type AuthMiddleware struct {
@@ -27,7 +27,7 @@ func (ctx *AuthMiddleware) AuthToken(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if tokenString == "" {
-			return BaseResponse(c, false, STATUS_ERROR, "lack of token", struct{}{})
+			return errors.New("lack of token")
 		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -40,19 +40,19 @@ func (ctx *AuthMiddleware) AuthToken(next echo.HandlerFunc) echo.HandlerFunc {
 		})
 
 		if err != nil {
-			return BaseResponse(c, false, STATUS_ERROR, "invalid token", struct{}{})
+			return errors.New("invalid token")
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			id, ok := claims["id"]
 			if !ok {
-				return BaseResponse(c, false, STATUS_ERROR, "invalid token", struct{}{})
+				return errors.New("invalid token")
 			} else {
 				c.Set("id", id)
 				c.Set("token", tokenString)
 			}
 		} else {
-			return BaseResponse(c, false, STATUS_ERROR, "invalid token", struct{}{})
+			return errors.New("invalid token")
 		}
 
 		return next(c)

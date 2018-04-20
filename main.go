@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/pwcong/img-hosting/config"
+	"github.com/pwcong/img-hosting/controller"
 	"github.com/pwcong/img-hosting/db"
 	"github.com/pwcong/img-hosting/middleware"
 	"github.com/pwcong/img-hosting/model"
@@ -54,6 +56,16 @@ func main() {
 	initDB(orm.DB)
 
 	e := echo.New()
+
+	// 全局错误处理
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		c.JSON(http.StatusOK, controller.BaseResponseJSON{
+			Success: false,
+			Code:    controller.STATUS_ERROR,
+			Message: err.Error(),
+		})
+	}
+
 	// 初始化中间件
 	initMiddlewares(e, &conf)
 	// 初始化路由
