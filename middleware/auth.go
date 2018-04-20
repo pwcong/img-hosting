@@ -16,7 +16,15 @@ type AuthMiddleware struct {
 func (ctx *AuthMiddleware) AuthToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		tokenString := c.Request().Header.Get("Token")
+		cookie, err := c.Request().Cookie("Token")
+
+		var tokenString string
+		if err == nil {
+			fmt.Println(cookie.Value)
+			tokenString = cookie.Value
+		} else {
+			tokenString = c.Request().Header.Get("Token")
+		}
 
 		if tokenString == "" {
 			return BaseResponse(c, false, STATUS_ERROR, "lack of token", struct{}{})

@@ -52,7 +52,8 @@ func (ctx *UserController) Login(c echo.Context) error {
 	}
 
 	cookie := new(http.Cookie)
-	cookie.Name = "token"
+	cookie.Path = "/"
+	cookie.Name = "Token"
 	cookie.Value = t
 	cookie.Expires = now.Add(time.Duration(expiredTime/3600) * time.Hour)
 
