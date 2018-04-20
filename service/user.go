@@ -31,7 +31,9 @@ func (ctx *UserService) Register(username string, password string) (model.User, 
 		PasswordSalt: salt.String(),
 	}
 
-	db.Create(&user)
+	if dbc := db.Create(&user); dbc.Error != nil {
+		return model.User{}, dbc.Error
+	}
 
 	return user, nil
 }

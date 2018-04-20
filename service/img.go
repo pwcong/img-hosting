@@ -74,7 +74,7 @@ func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) 
 		if err != nil {
 			root = filepath.Dir(os.Args[0])
 		}
-		
+
 		dir := filepath.Join(root, "public/"+img.Year+"/"+img.Month+"/"+img.Date)
 
 		err = os.MkdirAll(dir, 0666)
@@ -87,7 +87,9 @@ func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) 
 			return model.Img{}, err
 		}
 
-		db.Create(&img)
+		if dbc := db.Create(&img); dbc.Error != nil {
+			return model.Img{}, dbc.Error
+		}
 	}
 
 	return img, nil
@@ -110,7 +112,9 @@ func (ctx *ImgService) SavePrivateImage(file *multipart.FileHeader, id uint) (mo
 		return model.Img{}, err
 	}
 
-	db.Model(&user).Association("Imgs").Append([]model.Img{img})
+	if dbc := db.Model(&user).Association("Imgs").Append([]model.Img{img}); dbc.Error != nil {
+		return model.Img{}, dbc.Error
+	}
 
 	return img, nil
 
@@ -128,7 +132,9 @@ func (ctx *ImgService) GetPrivateImages(id uint) ([]model.Img, error) {
 	}
 
 	var imgs []model.Img
-	db.Model(&user).Related(&imgs, "Imgs")
+	if dbc := db.Model(&user).Related(&imgs, "Imgs"); dbc.Error != nil {
+		return []model.Img{}, dbc.Error
+	}
 
 	return imgs, nil
 
@@ -149,7 +155,9 @@ func (ctx *ImgService) RemovePrivateImages(userId uint, imgIds []uint) ([]model.
 
 	db.Where("id in (?)", imgIds).Find(&imgs)
 
-	db.Model(&user).Association("Imgs").Delete(imgs)
+	if dbc := db.Model(&user).Association("Imgs").Delete(imgs); dbc.Error != nil {
+		return []model.Img{}, dbc.Error
+	}
 
 	return imgs, nil
 
