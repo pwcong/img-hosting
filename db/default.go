@@ -14,9 +14,7 @@ type ORM struct {
 	Name string
 }
 
-func (o *ORM) Open(user string, password string, address string, dbname string) {
-
-	connectionURL := user + ":" + password + "@" + "tcp(" + address + ")/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
+func (o *ORM) Open(connectionURL string) {
 
 	db, err := gorm.Open(o.Name, connectionURL)
 

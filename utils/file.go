@@ -1,21 +1,41 @@
 package utils
 
 import (
+	"io"
 	"os"
+	"strings"
 )
 
-func MkdirIFNotExist(dirPath string) error {
+func CopyFile(srcPath string, dstPath string) error {
 
-	_, err := os.Stat(dirPath)
+	src, err := os.Open(srcPath)
 
-	if err == nil {
-		return nil
-	}
-
-	err = os.Mkdir(dirPath, 0666)
 	if err != nil {
 		return err
 	}
+	defer src.Close()
 
-	return nil
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// Copy
+	_, err = io.Copy(dst, src)
+
+	return err
+
+}
+
+func GetExtension(filename string) string {
+
+	t := strings.Split(filename, ".")
+
+	if len(t) < 2 {
+		return "unknown"
+	} else {
+		return t[len(t)-1]
+	}
+
 }

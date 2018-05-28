@@ -38,18 +38,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mySQLConfig, ok := conf.Databases["mysql"]
+	orm := db.ORM{Name: "mysql"}
+
+	dbConfig, ok := conf.Databases["mysql"]
 	if !ok {
 		log.Fatal("Can not load configuration of MySQL")
 	}
 
-	orm := db.ORM{DB: nil, Name: "mysql"}
+	connectionURL := dbConfig.Username + ":" + dbConfig.Password + "@" + "tcp(" + dbConfig.Host + ":" + strconv.Itoa(dbConfig.Port) + ")/" + dbConfig.DBName + "?charset=utf8&parseTime=True&loc=Local"
 
-	orm.Open(
-		mySQLConfig.Username,
-		mySQLConfig.Password,
-		mySQLConfig.Host+":"+strconv.Itoa(mySQLConfig.Port),
-		mySQLConfig.DBName)
+	orm.Open(connectionURL)
 
 	defer orm.Close()
 

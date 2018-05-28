@@ -8,29 +8,14 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/pwcong/img-hosting/model"
+	"github.com/pwcong/img-hosting/utils"
 )
 
 type ImgService struct {
 	Base *BaseService
-}
-
-func GetExtension(filename string) string {
-
-	if len(filename) < 1 {
-		return "unknown"
-	}
-
-	res := strings.Split(filename, ".")
-
-	if len(res) < 2 {
-		return "unknown"
-	}
-
-	return res[1]
 }
 
 func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) {
@@ -67,15 +52,12 @@ func (ctx *ImgService) SaveImage(file *multipart.FileHeader) (model.Img, error) 
 			Year:     now.Format("2006"),
 			Month:    now.Format("01"),
 			Date:     now.Format("02"),
-			ExtName:  GetExtension(file.Filename),
+			ExtName:  utils.GetExtension(file.Filename),
 		}
 
-		root, err := os.Getwd()
-		if err != nil {
-			root = filepath.Dir(os.Args[0])
-		}
+		rootDir := utils.GetRootDir()
 
-		dir := filepath.Join(root, "public/"+img.Year+"/"+img.Month+"/"+img.Date)
+		dir := filepath.Join(rootDir, "public/"+img.Year+"/"+img.Month+"/"+img.Date)
 
 		err = os.MkdirAll(dir, 0666)
 		if err != nil {

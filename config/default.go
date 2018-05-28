@@ -2,10 +2,10 @@ package config
 
 import (
 	"log"
-	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+	"github.com/pwcong/img-hosting/utils"
 )
 
 const DEFAULT_CONFIG = `
@@ -35,10 +35,10 @@ expiredTime = 86400
 `
 
 type Config struct {
-	Server      serverConfig
+	Server      ServerConfig
 	Auth        AuthConfig
-	Databases   map[string]databaseConfig
-	Middlewares map[string]middlewareConfig
+	Databases   map[string]DatabaseConfig
+	Middlewares map[string]MiddlewareConfig
 }
 
 type AuthConfig struct {
@@ -46,20 +46,21 @@ type AuthConfig struct {
 	ExpiredTime int
 }
 
-type serverConfig struct {
+type ServerConfig struct {
 	Host string
 	Port int
 }
 
-type databaseConfig struct {
+type DatabaseConfig struct {
 	Host     string
 	Port     int
 	Username string
 	Password string
 	DBName   string
+	DBPath   string
 }
 
-type middlewareConfig struct {
+type MiddlewareConfig struct {
 	Active bool
 }
 
@@ -71,12 +72,9 @@ func Initialize() (Config, error) {
 
 	var conf Config
 
-	root, err := os.Getwd()
-	if err != nil {
-		root = filepath.Dir(os.Args[0])
-	}
+	rootDir := utils.GetRootDir()
 
-	_, err = toml.DecodeFile(filepath.Join(root, "config/default.toml"), &conf)
+	_, err := toml.DecodeFile(filepath.Join(rootDir, "config/default.toml"), &conf)
 
 	if err == nil {
 
