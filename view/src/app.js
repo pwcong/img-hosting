@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import { Message, MessageBox, Icon, Pagination, Card, Dialog } from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Icon);
 Vue.use(Pagination);

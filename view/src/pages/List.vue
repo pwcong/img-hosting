@@ -143,7 +143,7 @@
 </style>
 <script>
 import Cookies from 'js-cookie';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { removeImage } from '@/network/api/img';
 
@@ -243,7 +243,7 @@ export default {
       return this.$store.getters.imgList.map(img => ({
         ...img,
         url: BASE_API + img.url,
-        created_at: moment(img.created_at).format('YYYY-MM-DD')
+        created_at: dayjs(img.created_at).format('YYYY-MM-DD')
       }));
     }
   },

@@ -1,16 +1,36 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const VueLoaderPlugin = require('vue-loader').VueLoaderPlugin;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const isProd = process.env.NODE_ENV === 'production';
+const distPath = path.resolve(__dirname, 'dist');
+
+const commonCssLoaders = [
+  isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+  {
+    loader: 'css-loader',
+    options: { importLoaders: 1 }
+  },
+  {
+    loader: 'postcss-loader',
+    options: {
+      plugins: [require('postcss-preset-env')()]
+    }
+  }
+];
 
 module.exports = {
+  mode: isProd ? 'production' : 'development',
   entry: {
     index: './src/app.js',
-    vendor: ['babel-polyfill', 'vue', 'vuex', 'vue-router', 'axios']
+    vendors: ['@babel/polyfill', 'vue', 'vuex', 'vue-router', 'axios']
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: distPath,
     filename: 'js/[name].[hash].js'
   },
   module: {
@@ -18,31 +38,23 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          presets: ['env', 'stage-1']
-        }
+        loader: 'babel-loader'
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          postcss: [require('postcss-cssnext')],
-          extractCSS: true,
-          esModule: true
-        }
+        loader: 'vue-loader'
       },
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        use: [...commonCssLoaders, 'sass-loader']
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: commonCssLoaders
       },
       {
         test: /\.(woff|eot|ttf)\??.*$/,
-        use: ['url-loader']
+        loader: 'url-loader'
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -56,54 +68,39 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      vue$: 'vue/dist/vue.esm.js',
       '@': path.join(__dirname, 'src')
     }
   },
-  devtool: 'inline-source-map',
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  },
+  devtool: 'source-map',
   devServer: {
     historyApiFallback: true,
     port: 3000,
     contentBase: ['./'],
     inline: true,
-    publicPath: '/'
+    publicPath: '/',
+    hot: true
   },
   plugins: [
+    new CleanWebpackPlugin(distPath),
+    new VueLoaderPlugin(),
     new HTMLWebpackPlugin({
       title: 'IMG HOSTING - 简单而实用的图库系统',
-      template: 'index.ejs',
-      minify: {
-        collapseWhitespace: true
-      }
+      template: 'src/index.ejs'
     }),
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: 'css/[name].[hash].css',
       allChunks: true
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'js/vendor.js'
     })
-  ]
+  ].concat(isProd ? [] : [new webpack.HotModuleReplacementPlugin()])
 };
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = 'source-map';
-
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ]);
-}
