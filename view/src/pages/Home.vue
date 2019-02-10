@@ -168,6 +168,12 @@
       flex: 1;
       padding: 0 8px;
       border: 1px solid #aaa;
+      outline: none;
+      transition: all .3s;
+      &:hover,
+      &:focus {
+        border-color: #20b2aa;
+      }
     }
 
     .upload-toolbar-btn {

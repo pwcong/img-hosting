@@ -74,7 +74,7 @@
   }
 
   .list-wrap {
-    min-height: 300px;
+    min-height: 70vh;
     padding: 16px;
 
     .el-card {

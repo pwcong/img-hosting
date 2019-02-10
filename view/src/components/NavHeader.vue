@@ -20,7 +20,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  right: 0;
   box-shadow: 0 1px 1px #ccc;
 
   .nav-item {

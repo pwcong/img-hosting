@@ -257,6 +257,10 @@ body {
     box-sizing: border-box;
   }
 }
+
+.el-pager li.active {
+  color: #20b2aa;
+}
 </style>
 
 <script>
