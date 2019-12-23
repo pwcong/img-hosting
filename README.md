@@ -2,8 +2,6 @@
 
 IMG HOSTING 是个简单而实用的图库系统，Golang + Vue，前后分离。
 
-[预览地址: http://119.23.232.219:8001/](http://119.23.232.219:8001/)
-
 ![img](https://github.com/pwcong/SnapShot/blob/master/img-hosting/01.png?raw=true)
 
 ## 安装
