@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/pwcong/img-hosting/config"
-	"github.com/pwcong/img-hosting/model"
+	"img-hosting/config"
+	"img-hosting/model"
 )
 
 type BaseService struct {

@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/pwcong/img-hosting/model"
-	"github.com/pwcong/img-hosting/utils"
+	"img-hosting/model"
+	"img-hosting/utils"
 )
 
 type ImgService struct {

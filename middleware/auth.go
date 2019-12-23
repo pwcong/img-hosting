@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	"img-hosting/config"
+
 	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/config"
+	"github.com/labstack/echo/v4"
 )
 
 type AuthMiddleware struct {

@@ -2,11 +2,11 @@ package router
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/config"
-	"github.com/pwcong/img-hosting/controller"
-	"github.com/pwcong/img-hosting/middleware"
-	"github.com/pwcong/img-hosting/service"
+	"github.com/labstack/echo/v4"
+	"img-hosting/config"
+	"img-hosting/controller"
+	"img-hosting/middleware"
+	"img-hosting/service"
 )
 
 func Init(e *echo.Echo, conf *config.Config, db *gorm.DB) {

@@ -3,7 +3,8 @@ package service
 import (
 	"errors"
 
-	"github.com/pwcong/img-hosting/model"
+	"img-hosting/model"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -19,10 +20,8 @@ func (ctx *UserService) Register(username string, password string) (model.User, 
 		return model.User{}, errors.New("user is existed")
 	}
 
-	salt, err := uuid.NewV1()
-	if err != nil {
-		return model.User{}, err
-	}
+	salt := uuid.NewV1()
+
 	password = uuid.NewV5(salt, password).String()
 
 	var user model.User = model.User{

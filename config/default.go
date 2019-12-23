@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
-	"github.com/pwcong/img-hosting/utils"
+	"img-hosting/utils"
 )
 
 const DEFAULT_CONFIG = `

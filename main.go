@@ -6,14 +6,14 @@ import (
 	"strconv"
 
 	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/config"
-	"github.com/pwcong/img-hosting/controller"
-	"github.com/pwcong/img-hosting/db"
-	"github.com/pwcong/img-hosting/middleware"
-	"github.com/pwcong/img-hosting/model"
-	"github.com/pwcong/img-hosting/router"
-	"github.com/pwcong/img-hosting/utils"
+	"github.com/labstack/echo/v4"
+	"img-hosting/config"
+	"img-hosting/controller"
+	"img-hosting/db"
+	"img-hosting/middleware"
+	"img-hosting/model"
+	"img-hosting/router"
+	"img-hosting/utils"
 )
 
 func initMiddlewares(e *echo.Echo, conf *config.Config) {

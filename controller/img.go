@@ -3,9 +3,9 @@ package controller
 import (
 	"time"
 
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/model"
-	"github.com/pwcong/img-hosting/service"
+	"github.com/labstack/echo/v4"
+	"img-hosting/model"
+	"img-hosting/service"
 )
 
 type ImgItem struct {

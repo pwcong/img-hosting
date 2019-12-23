@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/service"
+	"github.com/labstack/echo/v4"
+	"img-hosting/service"
 )
 
 type UserForm struct {

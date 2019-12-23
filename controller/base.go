@@ -3,9 +3,10 @@ package controller
 import (
 	"net/http"
 
-	"github.com/labstack/echo"
-	"github.com/pwcong/img-hosting/config"
-	"github.com/pwcong/img-hosting/service"
+	"img-hosting/config"
+	"img-hosting/service"
+
+	"github.com/labstack/echo/v4"
 )
 
 const (
