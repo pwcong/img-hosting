@@ -16,7 +16,7 @@ const content = `
 
 ### API文档
 
-> API文档地址 -> [Document For IMG HOSTING](/doc)
+> API文档地址 -> [Document For IMG HOSTING](/doc/index.html)
 
 #### 分页支持
 

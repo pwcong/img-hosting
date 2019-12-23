@@ -21,7 +21,7 @@
   left: 0;
   top: 0;
   right: 0;
-  box-shadow: 0 1px 1px #ccc;
+  box-shadow: 0 1px 4px 1px #eee;
 
   .nav-item {
     display: inline-block;
