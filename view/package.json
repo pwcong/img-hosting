@@ -57,7 +57,7 @@
     "dayjs": "^1.8.5",
     "element-ui": "^2.5.4",
     "js-cookie": "^2.2.0",
-    "marked": "^0.3.17",
+    "marked": "^4.0.10",
     "normalize.css": "^8.0.0",
     "vue": "^2.6.4",
     "vue-router": "^3.0.2",
